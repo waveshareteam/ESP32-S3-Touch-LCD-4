@@ -1,0 +1,7 @@
+## IDF Component Manager Manifest File
+dependencies:
+  waveshare/esp32_s3_touch_lcd_4:
+    version: "1.*"
+  lvgl/lvgl:
+    version: "9.2.0"
+    public: true
