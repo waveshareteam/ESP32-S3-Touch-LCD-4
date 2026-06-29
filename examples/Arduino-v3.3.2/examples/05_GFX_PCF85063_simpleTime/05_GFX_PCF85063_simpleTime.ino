@@ -1,6 +1,7 @@
 #include <Arduino_GFX_Library.h>
 #include "SensorPCF85063.hpp"
 #include <Wire.h>
+#include "WS_CH32_IO.h"
 
 #include "HWCDC.h"
 HWCDC USBSerial;
@@ -26,17 +27,10 @@ Arduino_RGB_Display *gfx = new Arduino_RGB_Display(
 void setup(void) {
   USBSerial.begin(115200);
 
-  Wire.begin(15, 7);  // 初始化I2C总线
-
-  Wire.beginTransmission(0x24);
-  Wire.write(0x02);
-  Wire.write(0xff);
-  Wire.endTransmission();
-
-  Wire.beginTransmission(0x24);
-  Wire.write(0x03);
-  Wire.write(0x3a);
-  Wire.endTransmission();
+  if (!WS_CH32_IO::begin(Wire, WS_CH32_IO::DEFAULT_SDA, WS_CH32_IO::DEFAULT_SCL,
+                         WS_CH32_IO::DEFAULT_I2C_FREQ, &USBSerial)) {
+    USBSerial.println("CH32V003 IO expander init failed");
+  }
 
   if (!rtc.begin(Wire, PCF85063_SLAVE_ADDRESS, 15, 7)) {
     USBSerial.println("Failed to find PCF8563 - check your wiring!");

@@ -1,6 +1,7 @@
 #include <Arduino_GFX_Library.h>
 #include "HWCDC.h"
 #include <Wire.h>
+#include "WS_CH32_IO.h"
 
 HWCDC USBSerial;
 Arduino_DataBus *bus = new Arduino_SWSPI(
@@ -26,17 +27,10 @@ void setup(void)
   int numCols = 480 / 10;
   int numRows = 480 / 10;
 
-  Wire.begin(15, 7);  // 初始化I2C总线
-
-  Wire.beginTransmission(0x24);
-  Wire.write(0x02);
-  Wire.write(0xff);
-  Wire.endTransmission();
-
-  Wire.beginTransmission(0x24);
-  Wire.write(0x03);
-  Wire.write(0x3a);
-  Wire.endTransmission();
+  if (!WS_CH32_IO::begin(Wire, WS_CH32_IO::DEFAULT_SDA, WS_CH32_IO::DEFAULT_SCL,
+                         WS_CH32_IO::DEFAULT_I2C_FREQ, &USBSerial)) {
+    USBSerial.println("CH32V003 IO expander init failed");
+  }
 
   // Init Display
   if (!gfx->begin()) {

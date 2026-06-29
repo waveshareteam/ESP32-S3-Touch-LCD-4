@@ -2,6 +2,15 @@
 
 #if defined(ESP32)
 
+static uint32_t gfxSpiFrequencyToClockDiv(uint32_t freq)
+{
+#if defined(ESP_ARDUINO_VERSION) && (ESP_ARDUINO_VERSION >= ESP_ARDUINO_VERSION_VAL(3, 3, 0))
+  return spiFrequencyToClockDiv(NULL, freq);
+#else
+  return spiFrequencyToClockDiv(freq);
+#endif
+}
+
 /**
  * @brief Arduino_ESP32SPIDMA
  *
@@ -60,7 +69,7 @@ bool Arduino_ESP32SPIDMA::begin(int32_t speed, int8_t dataMode)
 
   if (!_div)
   {
-    _div = spiFrequencyToClockDiv(_speed);
+    _div = gfxSpiFrequencyToClockDiv(_speed);
   }
 
   // set pin mode

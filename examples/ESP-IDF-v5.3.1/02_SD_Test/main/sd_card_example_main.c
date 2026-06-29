@@ -1,5 +1,5 @@
 /* SD card and FAT filesystem example.
-   This example uses SPI peripheral to communicate with SD card.
+   This example uses the SDMMC peripheral to communicate with the SD card.
 
    This example code is in the Public Domain (or CC0 licensed, at your option.)
 
@@ -12,18 +12,32 @@
 #include <sys/unistd.h>
 #include <sys/stat.h>
 #include "esp_vfs_fat.h"
+#include "driver/sdmmc_host.h"
 #include "sdmmc_cmd.h"
 
-#include "driver/i2c.h"
+#include "driver/gpio.h"
+#include "driver/i2c_master.h"
+#include "esp_check.h"
+#include "esp_io_expander.h"
+#include "esp_rom_sys.h"
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+#include "custom_io_expander_ch32v003.h"
 
 
-#define I2C_MASTER_SCL_IO           9       /*!< GPIO number used for I2C master clock */
-#define I2C_MASTER_SDA_IO           8       /*!< GPIO number used for I2C master data  */
-#define I2C_MASTER_NUM              0       /*!< I2C master i2c port number, the number of i2c peripheral interfaces available will depend on the chip */
-#define I2C_MASTER_FREQ_HZ          400000                     /*!< I2C master clock frequency */
-#define I2C_MASTER_TX_BUF_DISABLE   0                          /*!< I2C master doesn't need buffer */
-#define I2C_MASTER_RX_BUF_DISABLE   0                          /*!< I2C master doesn't need buffer */
-#define I2C_MASTER_TIMEOUT_MS       1000
+#define BOARD_I2C_SDA               GPIO_NUM_15
+#define BOARD_I2C_SCL               GPIO_NUM_7
+#define BOARD_I2C_NUM               I2C_NUM_0
+
+#define BOARD_SD_D0                 GPIO_NUM_4
+#define BOARD_SD_CMD                GPIO_NUM_1
+#define BOARD_SD_CLK                GPIO_NUM_2
+
+#define CH32_LCD_TOUCH_RST_MASK     (IO_EXPANDER_PIN_NUM_1 | IO_EXPANDER_PIN_NUM_3)
+#define CH32_SYS_EN_MASK            IO_EXPANDER_PIN_NUM_5
+#define CH32_BEE_EN_MASK            IO_EXPANDER_PIN_NUM_6
+#define CH32_OUTPUT_MASK            (CH32_SYS_EN_MASK | CH32_BEE_EN_MASK | CH32_LCD_TOUCH_RST_MASK)
+#define CH32_RTC_INT_MASK           IO_EXPANDER_PIN_NUM_7
 
 
 #define EXAMPLE_MAX_CHAR_SIZE    64
@@ -31,13 +45,6 @@
 static const char *TAG = "example";
 
 #define MOUNT_POINT "/sdcard"
-
-// Pin assignments can be set in menuconfig, see "SD SPI Example Configuration" menu.
-// You can also change the pin assignments here by changing the following 4 lines.
-#define PIN_NUM_MISO  CONFIG_EXAMPLE_PIN_MISO
-#define PIN_NUM_MOSI  CONFIG_EXAMPLE_PIN_MOSI
-#define PIN_NUM_CLK   CONFIG_EXAMPLE_PIN_CLK
-#define PIN_NUM_CS    CONFIG_EXAMPLE_PIN_CS
 
 static esp_err_t s_example_write_file(const char *path, char *data)
 {
@@ -76,40 +83,88 @@ static esp_err_t s_example_read_file(const char *path)
     return ESP_OK;
 }
 
-/**
- * @brief i2c master initialization
- */
-esp_err_t i2c_master_init(void)
+static void board_i2c_recover(void)
 {
-    int i2c_master_port = I2C_MASTER_NUM;
+    gpio_config_t io_conf = {0};
+    io_conf.pin_bit_mask = (1ULL << BOARD_I2C_SDA) | (1ULL << BOARD_I2C_SCL);
+    io_conf.mode = GPIO_MODE_INPUT;
+    io_conf.pull_up_en = GPIO_PULLUP_ENABLE;
+    io_conf.pull_down_en = GPIO_PULLDOWN_DISABLE;
+    io_conf.intr_type = GPIO_INTR_DISABLE;
+    gpio_config(&io_conf);
+    esp_rom_delay_us(20);
 
-    i2c_config_t conf = {
-        .mode = I2C_MODE_MASTER,
-        .sda_io_num = I2C_MASTER_SDA_IO,
-        .scl_io_num = I2C_MASTER_SCL_IO,
-        .sda_pullup_en = GPIO_PULLUP_ENABLE,
-        .scl_pullup_en = GPIO_PULLUP_ENABLE,
-        .master.clk_speed = I2C_MASTER_FREQ_HZ,
-    };
+    gpio_set_direction(BOARD_I2C_SCL, GPIO_MODE_OUTPUT_OD);
+    gpio_set_pull_mode(BOARD_I2C_SCL, GPIO_PULLUP_ONLY);
+    gpio_set_level(BOARD_I2C_SCL, 1);
+    esp_rom_delay_us(10);
 
-    i2c_param_config(i2c_master_port, &conf);
+    for (int i = 0; i < 9 && gpio_get_level(BOARD_I2C_SDA) == 0; ++i) {
+        gpio_set_level(BOARD_I2C_SCL, 0);
+        esp_rom_delay_us(10);
+        gpio_set_level(BOARD_I2C_SCL, 1);
+        esp_rom_delay_us(10);
+    }
 
-    return i2c_driver_install(i2c_master_port, conf.mode, I2C_MASTER_RX_BUF_DISABLE, I2C_MASTER_TX_BUF_DISABLE, 0);
+    gpio_set_direction(BOARD_I2C_SDA, GPIO_MODE_OUTPUT_OD);
+    gpio_set_pull_mode(BOARD_I2C_SDA, GPIO_PULLUP_ONLY);
+    gpio_set_level(BOARD_I2C_SDA, 0);
+    esp_rom_delay_us(10);
+    gpio_set_level(BOARD_I2C_SCL, 1);
+    esp_rom_delay_us(10);
+    gpio_set_level(BOARD_I2C_SDA, 1);
+    esp_rom_delay_us(10);
+
+    gpio_set_direction(BOARD_I2C_SDA, GPIO_MODE_INPUT);
+    gpio_set_direction(BOARD_I2C_SCL, GPIO_MODE_INPUT);
+    gpio_set_pull_mode(BOARD_I2C_SDA, GPIO_PULLUP_ONLY);
+    gpio_set_pull_mode(BOARD_I2C_SCL, GPIO_PULLUP_ONLY);
+    vTaskDelay(pdMS_TO_TICKS(20));
 }
 
+static esp_err_t board_io_expander_init(void)
+{
+    board_i2c_recover();
+
+    i2c_master_bus_handle_t i2c_bus = NULL;
+    i2c_master_bus_config_t i2c_bus_conf = {
+        .clk_source = I2C_CLK_SRC_DEFAULT,
+        .sda_io_num = BOARD_I2C_SDA,
+        .scl_io_num = BOARD_I2C_SCL,
+        .i2c_port = BOARD_I2C_NUM,
+    };
+    ESP_RETURN_ON_ERROR(i2c_new_master_bus(&i2c_bus_conf, &i2c_bus), TAG, "I2C bus init failed");
+
+    esp_io_expander_handle_t io_expander = NULL;
+    esp_err_t ret = ESP_FAIL;
+    for (int attempt = 0; attempt < 3; ++attempt) {
+        ret = custom_io_expander_new_i2c_ch32v003(i2c_bus, CUSTOM_IO_EXPANDER_I2C_CH32V003_ADDRESS, &io_expander);
+        if (ret == ESP_OK) {
+            break;
+        }
+        vTaskDelay(pdMS_TO_TICKS(20 + attempt * 20));
+    }
+    ESP_RETURN_ON_ERROR(ret, TAG, "CH32V003 init failed");
+
+    ESP_RETURN_ON_ERROR(esp_io_expander_set_dir(io_expander, CH32_OUTPUT_MASK, IO_EXPANDER_OUTPUT),
+                        TAG, "Set CH32V003 output direction failed");
+    ESP_RETURN_ON_ERROR(esp_io_expander_set_dir(io_expander, CH32_RTC_INT_MASK, IO_EXPANDER_INPUT),
+                        TAG, "Set CH32V003 input direction failed");
+    ESP_RETURN_ON_ERROR(esp_io_expander_set_level(io_expander, CH32_OUTPUT_MASK, 0),
+                        TAG, "Drive CH32V003 reset levels failed");
+    vTaskDelay(pdMS_TO_TICKS(200));
+    ESP_RETURN_ON_ERROR(esp_io_expander_set_level(io_expander, CH32_SYS_EN_MASK | CH32_LCD_TOUCH_RST_MASK, 1),
+                        TAG, "Release CH32V003 reset levels failed");
+    vTaskDelay(pdMS_TO_TICKS(200));
+
+    return ESP_OK;
+}
 
 void app_main(void)
 {
     esp_err_t ret;
-    
-    ESP_ERROR_CHECK(i2c_master_init());
 
-    uint8_t write_buf = 0x01;
-
-    i2c_master_write_to_device(I2C_MASTER_NUM, 0x24, &write_buf, 1, I2C_MASTER_TIMEOUT_MS / portTICK_PERIOD_MS);
-
-    write_buf = 0x0A;
-    i2c_master_write_to_device(I2C_MASTER_NUM, 0x38, &write_buf, 1, I2C_MASTER_TIMEOUT_MS / portTICK_PERIOD_MS);
+    ESP_ERROR_CHECK(board_io_expander_init());
 
     // Options for mounting the filesystem.
     // If format_if_mount_failed is set to true, SD card will be partitioned and
@@ -128,37 +183,31 @@ void app_main(void)
     printf("Initializing SD card\r\n");
 
     // Use settings defined above to initialize SD card and mount FAT filesystem.
-    // Note: esp_vfs_fat_sdmmc/sdspi_mount is all-in-one convenience functions.
+    // Note: esp_vfs_fat_sdmmc_mount is an all-in-one convenience function.
     // Please check its source code and implement error recovery when developing
     // production applications.
-    printf("Using SPI peripheral\r\n");
+    printf("Using SDMMC peripheral\r\n");
 
-    // By default, SD card frequency is initialized to SDMMC_FREQ_DEFAULT (20MHz)
-    // For setting a specific frequency, use host.max_freq_khz (range 400kHz - 20MHz for SDSPI)
-    // Example: for fixed frequency of 10MHz, use host.max_freq_khz = 10000;
-    sdmmc_host_t host = SDSPI_HOST_DEFAULT();
-
-    spi_bus_config_t bus_cfg = {
-        .mosi_io_num = PIN_NUM_MOSI,
-        .miso_io_num = PIN_NUM_MISO,
-        .sclk_io_num = PIN_NUM_CLK,
-        .quadwp_io_num = -1,
-        .quadhd_io_num = -1,
-        .max_transfer_sz = 4000,
+    sdmmc_host_t host = SDMMC_HOST_DEFAULT();
+    sdmmc_slot_config_t slot_config = {
+        .clk = BOARD_SD_CLK,
+        .cmd = BOARD_SD_CMD,
+        .d0 = BOARD_SD_D0,
+        .d1 = GPIO_NUM_NC,
+        .d2 = GPIO_NUM_NC,
+        .d3 = GPIO_NUM_NC,
+        .d4 = GPIO_NUM_NC,
+        .d5 = GPIO_NUM_NC,
+        .d6 = GPIO_NUM_NC,
+        .d7 = GPIO_NUM_NC,
+        .cd = SDMMC_SLOT_NO_CD,
+        .wp = SDMMC_SLOT_NO_WP,
+        .width = 1,
+        .flags = 0,
     };
-    ret = spi_bus_initialize(host.slot, &bus_cfg, SDSPI_DEFAULT_DMA);
-    if (ret != ESP_OK) {
-        printf("Failed to initialize bus.\r\n");
-        return;
-    }
-    // This initializes the slot without card detect (CD) and write protect (WP) signals.
-    // Modify slot_config.gpio_cd and slot_config.gpio_wp if your board has these signals.
-    sdspi_device_config_t slot_config = SDSPI_DEVICE_CONFIG_DEFAULT();
-    slot_config.gpio_cs = PIN_NUM_CS;
-    slot_config.host_id = host.slot;
 
     printf("Mounting filesystem\r\n");
-    ret = esp_vfs_fat_sdspi_mount(mount_point, &host, &slot_config, &mount_config, &card);
+    ret = esp_vfs_fat_sdmmc_mount(mount_point, &host, &slot_config, &mount_config, &card);
 
     if (ret != ESP_OK) {
         if (ret == ESP_FAIL) {
@@ -235,10 +284,10 @@ void app_main(void)
         return;
     }
 
-    // All done, unmount partition and disable SPI peripheral
+    // All done, unmount partition and disable the SDMMC peripheral
     esp_vfs_fat_sdcard_unmount(mount_point, card);
     printf("Card unmounted\r\n");
 
     //deinitialize the bus after all devices are removed
-    spi_bus_free(host.slot);
+    sdmmc_host_deinit();
 }

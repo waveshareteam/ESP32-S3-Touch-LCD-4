@@ -6,6 +6,7 @@
 #include "TouchDrvGT911.hpp"
 #include <Wire.h>
 #include <SPI.h>
+#include "WS_CH32_IO.h"
 
 TouchDrvGT911 GT911;
 int16_t x[5], y[5];
@@ -180,17 +181,10 @@ bool init_gt911_with_probe(int sda_pin, int scl_pin) {
 void setup() {
   USBSerial.begin(115200); /* prepare for possible serial debug */
 
-  Wire.begin(15, 7);
-
-  Wire.beginTransmission(0x24);
-  Wire.write(0x02);
-  Wire.write(0xff);
-  Wire.endTransmission();
-
-  Wire.beginTransmission(0x24);
-  Wire.write(0x03);
-  Wire.write(0x3a);
-  Wire.endTransmission();
+  if (!WS_CH32_IO::begin(Wire, WS_CH32_IO::DEFAULT_SDA, WS_CH32_IO::DEFAULT_SCL,
+                         WS_CH32_IO::DEFAULT_I2C_FREQ, &USBSerial)) {
+    USBSerial.println("CH32V003 IO expander init failed");
+  }
 
   if (!init_gt911_with_probe(15, 7)) {
     while (1) {

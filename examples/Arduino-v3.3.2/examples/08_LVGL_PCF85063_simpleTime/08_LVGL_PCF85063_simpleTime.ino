@@ -6,6 +6,7 @@
 #include <Arduino.h>
 #include "SensorPCF85063.hpp"
 #include "HWCDC.h"
+#include "WS_CH32_IO.h"
 
 HWCDC USBSerial;
 #define EXAMPLE_LVGL_TICK_PERIOD_MS 2
@@ -71,17 +72,10 @@ void example_increase_reboot(void *arg) {
 void setup() {
   USBSerial.begin(115200); /* prepare for possible serial debug */
 
-  Wire.begin(15, 7);
-
-  Wire.beginTransmission(0x24);
-  Wire.write(0x02);
-  Wire.write(0xff);
-  Wire.endTransmission();
-
-  Wire.beginTransmission(0x24);
-  Wire.write(0x03);
-  Wire.write(0x3a);
-  Wire.endTransmission();
+  if (!WS_CH32_IO::begin(Wire, WS_CH32_IO::DEFAULT_SDA, WS_CH32_IO::DEFAULT_SCL,
+                         WS_CH32_IO::DEFAULT_I2C_FREQ, &USBSerial)) {
+    USBSerial.println("CH32V003 IO expander init failed");
+  }
   if (!rtc.begin(Wire, PCF85063_SLAVE_ADDRESS, 15, 7)) {
     USBSerial.println("Failed to find PCF8563 - check your wiring!");
     while (1) {
