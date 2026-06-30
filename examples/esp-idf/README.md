@@ -19,6 +19,7 @@ Start with the peripheral checks, then move to display and UI examples:
 | 07 | [lvgl_demo_v9](07_lvgl_demo_v9/) | BSP display startup and LVGL v9 rendering |
 | 08 | [ESP32-S3-Touch-LCD-4-esp-brookesia](08_ESP32-S3-Touch-LCD-4-esp-brookesia/) | Advanced ESP-Brookesia phone UI |
 | 09 | [BatteryVoltage_LVGL](09_BatteryVoltage_LVGL/) | CH32 ADC battery-voltage sampling and LVGL display |
+| - | [ioexpander](ioexpander/) | Standalone CH32V003 IO expander test and customer guide |
 
 ## Build
 

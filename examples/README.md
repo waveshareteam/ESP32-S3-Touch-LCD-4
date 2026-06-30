@@ -30,6 +30,7 @@ and ESP-Brookesia applications.
 | [07_lvgl_demo_v9](esp-idf/07_lvgl_demo_v9/) | LVGL v9 display demo | Display and UI |
 | [08_ESP32-S3-Touch-LCD-4-esp-brookesia](esp-idf/08_ESP32-S3-Touch-LCD-4-esp-brookesia/) | ESP-Brookesia UI application | Advanced UI |
 | [09_BatteryVoltage_LVGL](esp-idf/09_BatteryVoltage_LVGL/) | CH32 ADC battery voltage display with LVGL | Display and board monitor |
+| [ioexpander](esp-idf/ioexpander/) | CH32V003 IO expander test and usage guide | Peripheral bring-up |
 
 See [../docs/CI.md](../docs/CI.md) for the ESP-IDF example build checks.
 
