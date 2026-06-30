@@ -1,76 +1,85 @@
-| Supported Targets | ESP32 | ESP32-C2 | ESP32-C3 | ESP32-C6 | ESP32-H2 | ESP32-P4 | ESP32-S2 | ESP32-S3 |
-| ----------------- | ----- | -------- | -------- | -------- | -------- | -------- | -------- | -------- |
+# RS485 UART Echo Test / RS485 串口回显测试
 
-# UART Echo Example
+[中文](#中文) | [English](#english)
 
-(See the README.md file in the upper level 'examples' directory for more information about examples.)
+## 中文
 
-This example demonstrates how to utilize UART interfaces by echoing back to the sender any data received on
-configured UART.
+本示例用于验证 ESP32-S3-Touch-LCD-4 的 RS485/UART 数据通路。程序使用 UART1，收到外部串口发送的数据后立即回传，并在调试串口打印收到的字符串。
 
-## How to use example
+### 硬件连接
 
-### Hardware Required
+| 信号 | 默认 GPIO | 说明 |
+| --- | --- | --- |
+| UART TXD | `GPIO44` | 连接到外部 RS485/串口接收端 |
+| UART RXD | `GPIO43` | 连接到外部 RS485/串口发送端 |
+| GND | `GND` | 与外部设备共地 |
+| 电平 | 3.3 V | 外部串口必须兼容 3.3 V 电平 |
 
-The example can be run on any development board, that is based on the Espressif SoC. The board shall be connected to a computer with a single USB cable for flashing and monitoring. The external interface should have 3.3V outputs. You may
-use e.g. 3.3V compatible USB-to-Serial dongle.
+默认引脚来自 `main/Kconfig.projbuild`。如果客户硬件连接不同，可运行 `idf.py menuconfig`，在 `Echo Example Configuration` 中修改 UART TXD/RXD。
 
-### Setup the Hardware
+### 编译和运行
 
-Connect the external serial interface to the board as follows.
-
-```
-  -----------------------------------------------------------------------------------------
-  | Target chip Interface | Kconfig Option     | Default ESP Pin      | External UART Pin |
-  | ----------------------|--------------------|----------------------|--------------------
-  | Transmit Data (TxD)   | EXAMPLE_UART_TXD   | GPIO4                | RxD               |
-  | Receive Data (RxD)    | EXAMPLE_UART_RXD   | GPIO5                | TxD               |
-  | Ground                | n/a                | GND                  | GND               |
-  -----------------------------------------------------------------------------------------
-```
-Note: Some GPIOs can not be used with certain chips because they are reserved for internal use. Please refer to UART documentation for selected target.
-
-Optionally, you can set-up and use a serial interface that has RTS and CTS signals in order to verify that the
-hardware control flow works. Connect the extra signals according to the following table, configure both extra pins in
-the example code `uart_echo_example_main.c` by replacing existing `UART_PIN_NO_CHANGE` macros with the appropriate pin
-numbers and configure UART1 driver to use the hardware flow control by setting `.flow_ctrl = UART_HW_FLOWCTRL_CTS_RTS`
-and adding `.rx_flow_ctrl_thresh = 122` to the `uart_config` structure.
-
-```
-  ---------------------------------------------------------------
-  | Target chip Interface | Macro           | External UART Pin |
-  | ----------------------|-----------------|--------------------
-  | Transmit Data (TxD)   | ECHO_TEST_RTS   | CTS               |
-  | Receive Data (RxD)    | ECHO_TEST_CTS   | RTS               |
-  | Ground                | n/a             | GND               |
-  ---------------------------------------------------------------
-```
-
-### Configure the project
-
-Use the command below to configure project using Kconfig menu as showed in the table above.
-The default Kconfig values can be changed such as: EXAMPLE_TASK_STACK_SIZE, EXAMPLE_UART_BAUD_RATE, EXAMPLE_UART_PORT_NUM (Refer to Kconfig file).
-```
-idf.py menuconfig
-```
-
-### Build and Flash
-
-Build the project and flash it to the board, then run monitor tool to view serial output:
-
-```
+```bash
+cd examples/esp-idf/01_RS485_Test
+idf.py set-target esp32s3
+idf.py build
 idf.py -p PORT flash monitor
 ```
 
-(To exit the serial monitor, type ``Ctrl-]``.)
+### 期望现象
 
-See the Getting Started Guide for full steps to configure and use ESP-IDF to build projects.
+1. 打开连接到 RS485/UART 端口的外部串口工具。
+2. 发送任意文本，例如 `hello`。
+3. 外部串口工具会收到相同内容的回显。
+4. ESP-IDF monitor 会打印类似日志：
 
-## Example Output
+```text
+I (...) UART TEST: Recv str: hello
+```
 
-Type some characters in the terminal connected to the external serial interface. As result you should see echo in the same terminal which you used for typing the characters. You can verify if the echo indeed comes from ESP board by
-disconnecting either `TxD` or `RxD` pin: no characters will appear when typing.
+### 常见问题
 
-## Troubleshooting
+- 如果没有回显，先确认 TX/RX 是否交叉连接，并确认外部设备是 3.3 V 电平。
+- 如果 monitor 没有日志但外部串口有回显，说明 UART 数据通路正常，可能只是发送内容没有可打印字符。
+- 如果使用的是板载 RS485 收发器，请确认外部 A/B 线连接、终端电阻和总线方向控制是否符合产品硬件设计。
 
-You are not supposed to see the echo in the terminal which is used for flashing and monitoring, but in the other UART configured through Kconfig can be used.
+## English
+
+This example verifies the RS485/UART data path on ESP32-S3-Touch-LCD-4. It uses UART1, echoes any received data back to the external sender, and prints the received string to the debug monitor.
+
+### Hardware Connection
+
+| Signal | Default GPIO | Description |
+| --- | --- | --- |
+| UART TXD | `GPIO44` | Connect to the external RS485/serial RX side |
+| UART RXD | `GPIO43` | Connect to the external RS485/serial TX side |
+| GND | `GND` | Common ground with the external device |
+| Level | 3.3 V | The external serial interface must be 3.3 V compatible |
+
+The default pins come from `main/Kconfig.projbuild`. If your wiring is different, run `idf.py menuconfig` and change UART TXD/RXD under `Echo Example Configuration`.
+
+### Build And Run
+
+```bash
+cd examples/esp-idf/01_RS485_Test
+idf.py set-target esp32s3
+idf.py build
+idf.py -p PORT flash monitor
+```
+
+### Expected Behavior
+
+1. Open a serial tool connected to the RS485/UART port.
+2. Send text such as `hello`.
+3. The external serial tool receives the same text as an echo.
+4. ESP-IDF monitor prints a log similar to:
+
+```text
+I (...) UART TEST: Recv str: hello
+```
+
+### Troubleshooting
+
+- If there is no echo, check that TX/RX are crossed and that the external device uses 3.3 V logic.
+- If there is echo but no monitor log, the UART path is working; the transmitted data may simply not be printable text.
+- If using the onboard RS485 transceiver, verify A/B wiring, termination, and bus direction control according to the product hardware design.

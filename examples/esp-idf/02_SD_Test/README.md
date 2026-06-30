@@ -1,127 +1,129 @@
-| Supported Targets | ESP32 | ESP32-C2 | ESP32-C3 | ESP32-C6 | ESP32-S2 | ESP32-S3 |
-| ----------------- | ----- | -------- | -------- | -------- | -------- | -------- |
+# SD Card Test / SD 卡测试
 
-# SD Card example (SDSPI)
+[中文](#中文) | [English](#english)
 
-(See the README.md file in the upper level 'examples' directory for more information about examples.)
+## 中文
 
-This example demonstrates how to use an SD card with an ESP device over an SPI interface. Example does the following steps:
+本示例用于验证 ESP32-S3-Touch-LCD-4 的 SD 卡接口。程序会初始化 CH32V003，释放板载电源/复位相关控制，然后通过 SDMMC 1-bit 模式挂载 SD 卡，写入文件、重命名、读取文件、格式化 FATFS，再重新写入并读取一个文件。
 
-1. Use an "all-in-one" `esp_vfs_fat_sdspi_mount` function to:
-    - initialize SDSPI peripheral,
-    - probe and initialize the card connected to SPI bus (DMA channel 1, MOSI, MISO and CLK lines, chip-specific SPI host id),
-    - mount FAT filesystem using FATFS library (and format card, if the filesystem cannot be mounted),
-    - register FAT filesystem in VFS, enabling C standard library and POSIX functions to be used.
-2. Print information about the card, such as name, type, capacity, and maximum supported frequency.
-3. Create a file using `fopen` and write to it using `fprintf`.
-4. Rename the file. Before renaming, check if destination file already exists using `stat` function, and remove it using `unlink` function.
-5. Open renamed file for reading, read back the line, and print it to the terminal.
+### 硬件和引脚
 
-This example support SD (SDSC, SDHC, SDXC) cards.
+| 功能 | GPIO/信号 | 说明 |
+| --- | --- | --- |
+| SD D0 | `GPIO4` | SDMMC 1-bit 数据线 |
+| SD CMD | `GPIO1` | SD 命令线 |
+| SD CLK | `GPIO2` | SD 时钟线 |
+| CH32 SDA | `GPIO15` | CH32V003 I2C SDA |
+| CH32 SCL | `GPIO7` | CH32V003 I2C SCL |
+| CH32 地址 | `0x24` | 用于释放 `SYS_EN`、LCD/触摸复位等 |
 
-## Hardware
+请插入 FAT32 可识别的 SD/SDHC/SDXC 卡。示例未使用独立的 CD/WP 引脚。
 
-This example requires a development board with an SD card socket and and SD card.
+### CH32 初始化
 
-Although it is possible to connect an SD card breakout adapter, keep in mind that connections using breakout cables are often unreliable and have poor signal integrity. You may need to use lower clock frequency when working with SD card breakout adapters.
+示例启动时会先执行 I2C 总线恢复，再初始化 CH32V003，并将以下输出配置为有效状态：
 
-It is recommended to get familiar with [the document about pullup requirements](https://docs.espressif.com/projects/esp-idf/en/latest/api-reference/peripherals/sd_pullup_requirements.html) to understand Pullup/down resistor support and compatibility of various ESP modules and development boards.
+- `EXIO1` / `TP_RST`
+- `EXIO3` / `LCD_RST`
+- `EXIO5` / `SYS_EN`
+- `EXIO6` / `BEE_EN`
 
-### Pin assignments
+这样可以避免快速复位后 I2C 总线或 CH32 状态异常导致 SD 示例启动不稳定。
 
-The GPIO pin numbers used to connect an SD card can be customized. This can be done in two ways:
+### 编译和运行
 
-1. Using menuconfig: Run `idf.py menuconfig` in the project directory and open "SD SPI Example Configuration" menu.
-2. In the source code: See the initialization of ``spi_bus_config_t`` and ``sdspi_device_config_t`` structures in the example code.
-
-This example doesn't utilize card detect (CD) and write protect (WP) signals from SD card slot.
-
-The table below shows the default pin assignments.
-
-SD card pin | SPI pin | ESP32 pin     | ESP32-S2, ESP32-S3 | ESP32-H2 | ESP32-C3 and other chips  |  Notes
-------------|---------|---------------|--------------------|----------|---------------------------|-------------
- D0         | MISO    | GPIO2         | GPIO37             | GPIO0    | GPIO6                     |
- D3         | CS      | GPIO13 (MTCK) | GPIO34             | GPIO1    | GPIO1                     |
- CLK        | SCK     | GPIO14 (MTMS) | GPIO36             | GPIO4    | GPIO5                     |
- CMD        | MOSI    | GPIO15 (MTDO) | GPIO35             | GPIO5    | GPIO4                     |  10k pullup
-
-
-#### ESP32 related notes
-
-With the default pin assignments, this example runs on ESP-WROVER-KIT boards without any extra modifications required. Only the SD card needs to be inserted into the slot.
-
-For other development boards, adjust the pin assignments as explained above.
-
-Some boards require specific manipulation to enable UART Download mode (GPIO2 low) - eg ESP32-Azure IoT Kit needs KEY_IO0 pressed down for the time of firmware flashing operation (sets IO0 and IO2 low). See troubleshooting section for more details
-
-#### ESP32-S2 and ESP32-S3 related notes
-
-With the default pin assignments, this example is compatible ESP32-S2-USB-OTG and ESP32-S3-USB-OTG development boards.
-
-For other development boards, adjust the pin assignments as explained above.
-
-#### Notes for ESP32-C3 and other chips
-
-Espressif doesn't offer development boards with an SD card slot for these chips. Please check the pin assignments and adjust them for your board if necessary. The process to change pin assignments is described above.
-
-### Build and flash
-
-Build the project and flash it to the board, then run monitor tool to view serial output:
-
-```
+```bash
+cd examples/esp-idf/02_SD_Test
+idf.py set-target esp32s3
+idf.py build
 idf.py -p PORT flash monitor
 ```
 
-(Replace PORT with serial port name.)
+如需在挂载失败时自动格式化，可运行 `idf.py menuconfig`，启用 `SD SPI Example Configuration` 中的格式化选项。注意本示例后半段会主动执行一次 FATFS 格式化，用于验证格式化流程。
 
-(To exit the serial monitor, type ``Ctrl-]``.)
+### 期望日志
 
-See the Getting Started Guide for full steps to configure and use ESP-IDF to build projects.
-
-
-## Example output
-
-Here is an example console output. In this case a 64GB SDHC card was connected, and `EXAMPLE_FORMAT_IF_MOUNT_FAILED` menuconfig option enabled. Card was unformatted, so the initial mount has failed. Card was then partitioned, formatted, and mounted again.
-
-```
-I (336) example: Initializing SD card
-I (336) example: Using SPI peripheral
-I (336) gpio: GPIO[13]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0
-W (596) vfs_fat_sdmmc: failed to mount card (13)
-W (596) vfs_fat_sdmmc: partitioning card
-W (596) vfs_fat_sdmmc: formatting card, allocation unit size=16384
-W (7386) vfs_fat_sdmmc: mounting again
-Name: XA0E5
-Type: SDHC/SDXC
-Speed: 20 MHz
-Size: 61068MB
-I (7386) example: Opening file /sdcard/hello.txt
-I (7396) example: File written
-I (7396) example: Renaming file /sdcard/hello.txt to /sdcard/foo.txt
-I (7396) example: Reading file /sdcard/foo.txt
-I (7396) example: Read from file: 'Hello XA0E5!'
-I (7396) example: Card unmounted
+```text
+Initializing SD card
+Using SDMMC peripheral
+Mounting filesystem
+Filesystem mounted
+Opening file /sdcard/hello.txt
+File written
+Reading file /sdcard/foo.txt
+Read from file: 'Hello ...!'
+file doesnt exist, format done
+Opening file /sdcard/nihao.txt
+Read from file: 'Nihao ...!'
+Card unmounted
 ```
 
-## Troubleshooting
+### 常见问题
 
-### Failure to mount filesystem
+- 挂载失败时，确认 SD 卡接触良好，并优先使用 FAT32 格式。
+- 初始化失败时，确认 CH32 I2C 引脚是 `GPIO15`/`GPIO7`，且没有其它代码占用同一 I2C 总线。
+- 如果客户修改硬件或使用飞线 SD 模块，可能需要降低 SDMMC 时钟并检查上拉电阻。
+- 本示例会格式化 SD 卡，请不要使用保存重要数据的卡。
 
-> The following error message is printed: `example: Failed to mount filesystem. If you want the card to be formatted, set the CONFIG_EXAMPLE_FORMAT_IF_MOUNT_FAILED menuconfig option.`
+## English
 
-The example will be able to mount only cards formatted using FAT32 filesystem. If the card is formatted as exFAT or some other filesystem, you have an option to format it in the example code. Enable the `CONFIG_EXAMPLE_FORMAT_IF_MOUNT_FAILED` menuconfig option, then build and flash the example.
+This example verifies the SD card interface on ESP32-S3-Touch-LCD-4. It initializes CH32V003 first, releases the onboard power/reset controls, mounts the SD card in SDMMC 1-bit mode, writes a file, renames it, reads it back, formats FATFS, then writes and reads another file.
 
+### Hardware And Pins
 
-### Unable to flash the example, or serial port not available (ESP32 only)
+| Function | GPIO/Signal | Description |
+| --- | --- | --- |
+| SD D0 | `GPIO4` | SDMMC 1-bit data line |
+| SD CMD | `GPIO1` | SD command line |
+| SD CLK | `GPIO2` | SD clock line |
+| CH32 SDA | `GPIO15` | CH32V003 I2C SDA |
+| CH32 SCL | `GPIO7` | CH32V003 I2C SCL |
+| CH32 address | `0x24` | Used to release `SYS_EN`, LCD/touch reset, and related controls |
 
-> After the first successful flashing of the example firmware, it is not possible to flash again. Download mode not activated when running `idf.py flash` or the board's serial port disappears completely.
+Insert an SD/SDHC/SDXC card that can be formatted as FAT32. This example does not use separate CD/WP pins.
 
-Some ESP32 boards require specific handling to activate the download mode after a system reset, due to GPIO2 pin now being used as both SDSPI (MISO) and an active-low bootstrapping signal for entering download mode. For instance, the ESP32-Azure IoT Kit requires KEY_IO0 button to remain pressed during whole firmware flashing operation, as it sets both GPIO0 and GPIO2 signals low.
+### CH32 Initialization
 
-Check you board documentation/schematics for appropriate procedure.
+At startup, the example recovers the I2C bus, initializes CH32V003, and sets the following outputs to a valid state:
 
-An attempt to download a new firmware under this conditions may also result in the board's serial port disappearing from your PC device list - rebooting your computer should fix the issue. After your device is back, use
+- `EXIO1` / `TP_RST`
+- `EXIO3` / `LCD_RST`
+- `EXIO5` / `SYS_EN`
+- `EXIO6` / `BEE_EN`
 
-`esptool --port PORT --before no_reset --baud 115200 --chip esp32 erase_flash`
+This helps avoid unstable startup after quick resets when the I2C bus or CH32 state has not fully reset.
 
-to erase your board's flash, then flash the firmware again.
+### Build And Run
+
+```bash
+cd examples/esp-idf/02_SD_Test
+idf.py set-target esp32s3
+idf.py build
+idf.py -p PORT flash monitor
+```
+
+To allow formatting when mount fails, run `idf.py menuconfig` and enable the format option under `SD SPI Example Configuration`. Note that the later part of this example intentionally formats FATFS to verify the format flow.
+
+### Expected Log
+
+```text
+Initializing SD card
+Using SDMMC peripheral
+Mounting filesystem
+Filesystem mounted
+Opening file /sdcard/hello.txt
+File written
+Reading file /sdcard/foo.txt
+Read from file: 'Hello ...!'
+file doesnt exist, format done
+Opening file /sdcard/nihao.txt
+Read from file: 'Nihao ...!'
+Card unmounted
+```
+
+### Troubleshooting
+
+- If mounting fails, check card contact first and prefer a FAT32 card.
+- If initialization fails, confirm the CH32 I2C pins are `GPIO15`/`GPIO7` and no other code owns the same I2C bus.
+- If the hardware is modified or an external SD breakout is used, lower the SDMMC clock and check pull-up resistors.
+- This example formats the SD card. Do not use a card that contains important data.
