@@ -10,6 +10,18 @@ You can find detailed configuration information on the product wiki page
 
 ---
 
+## Examples
+
+ESP-IDF examples are under [examples/ESP-IDF-v5.3.1](examples/ESP-IDF-v5.3.1/).
+The index is organized from peripheral bring-up examples to LVGL and
+ESP-Brookesia UI examples. Arduino sketches are under
+[examples/Arduino-v3.3.2](examples/Arduino-v3.3.2/).
+
+See [examples/README.md](examples/README.md) for the example map and
+[docs/CI.md](docs/CI.md) for the ESP-IDF CI checks.
+
+---
+
 ## 🛠️ Contributing
 
 We welcome contributions! Here’s how you can help:
