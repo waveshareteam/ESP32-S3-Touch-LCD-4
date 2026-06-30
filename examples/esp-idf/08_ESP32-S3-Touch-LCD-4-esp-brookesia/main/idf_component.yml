@@ -2,7 +2,7 @@
 dependencies:
   ## Required IDF version
   idf: ">=5.1.0"
-  waveshare/esp32_s3_touch_lcd_4: "^2.*"
+  waveshare/esp32_s3_touch_lcd_4: "3.0.0"
   espressif/esp_lvgl_port:
     version: "^2"
   espressif/esp-brookesia: "0.4.2"

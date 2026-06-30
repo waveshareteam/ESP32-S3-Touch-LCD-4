@@ -1,19 +1,12 @@
 set(LV_DEMO_DIR ../managed_components/lvgl__lvgl/demos)
 file(GLOB_RECURSE LV_DEMOS_SOURCES ${LV_DEMO_DIR}/*.c)
 set(EXTRA_REQUIRES)
-if(IDF_VERSION_MAJOR GREATER_EQUAL 6)
-    list(APPEND EXTRA_REQUIRES esp_driver_ledc)
-endif()
+list(APPEND EXTRA_REQUIRES nvs_flash)
 
 idf_component_register(
     SRCS main.c ${LV_DEMOS_SOURCES}
     INCLUDE_DIRS . ${LV_DEMO_DIR}
     REQUIRES ${EXTRA_REQUIRES})
-
-if(IDF_VERSION_MAJOR GREATER_EQUAL 6)
-    idf_component_get_property(BSP_LIB waveshare__esp32_s3_touch_lcd_4 COMPONENT_LIB)
-    target_link_libraries(${BSP_LIB} PUBLIC idf::esp_driver_ledc)
-endif()
 
 idf_component_get_property(LVGL_LIB lvgl__lvgl COMPONENT_LIB)
 target_compile_options(
