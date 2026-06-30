@@ -12,13 +12,13 @@ import sys
 from pathlib import Path
 
 
-EXAMPLES_ROOT = Path("examples/ESP-IDF-v5.3.1")
+EXAMPLES_ROOT = Path("examples/esp-idf")
 GLOBAL_EXAMPLE_PATTERNS = (
     ".github/workflows/esp-idf-examples.yml",
     ".github/scripts/discover_esp_idf_examples.py",
     "docs/CI.md",
     "examples/README.md",
-    "examples/ESP-IDF-v5.3.1/README.md",
+    "examples/esp-idf/README.md",
     "README.md",
 )
 

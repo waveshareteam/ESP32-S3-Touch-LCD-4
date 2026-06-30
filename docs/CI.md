@@ -7,14 +7,14 @@ added or changed. Arduino sketches are intentionally ignored by this workflow.
 
 The `ESP-IDF examples` workflow runs on:
 
-- Pull requests that change files under `examples/ESP-IDF-v5.3.1/`.
+- Pull requests that change files under `examples/esp-idf/`.
 - Pull requests that change the ESP-IDF example index or CI documentation.
 - Pull requests that change the workflow or discovery script.
 - Pushes to `main` that touch the same paths.
 - Manual runs from the GitHub Actions page.
 
 The workflow discovers buildable examples by looking for directories under
-`examples/ESP-IDF-v5.3.1/` that contain both:
+`examples/esp-idf/` that contain both:
 
 - `CMakeLists.txt`
 - `main/`
@@ -27,11 +27,11 @@ Manual runs accept one input:
 
 | Input | Value |
 | --- | --- |
-| `example` | `all`, a directory name such as `02_SD_Test`, or a full path such as `examples/ESP-IDF-v5.3.1/09_BatteryVoltage_LVGL` |
+| `example` | `all`, a directory name such as `02_SD_Test`, or a full path such as `examples/esp-idf/09_BatteryVoltage_LVGL` |
 
 The workflow currently builds with:
 
-- ESP-IDF Docker image `espressif/idf:v5.3.1`.
+- ESP-IDF Docker images `espressif/idf:v5.5.4` and `espressif/idf:v6.0.2`.
 - Target: `esp32s3`.
 
 Generated build artifacts, `managed_components/`, dependency lock files, and

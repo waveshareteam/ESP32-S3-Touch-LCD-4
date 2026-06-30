@@ -3,7 +3,7 @@ name: ESP-IDF examples
 on:
   pull_request:
     paths:
-      - "examples/ESP-IDF-v5.3.1/**"
+      - "examples/esp-idf/**"
       - "docs/CI.md"
       - "examples/README.md"
       - "README.md"
@@ -13,7 +13,7 @@ on:
     branches:
       - main
     paths:
-      - "examples/ESP-IDF-v5.3.1/**"
+      - "examples/esp-idf/**"
       - "docs/CI.md"
       - "examples/README.md"
       - "README.md"
@@ -91,7 +91,8 @@ jobs:
       matrix:
         example: ${{ fromJson(needs.discover.outputs.matrix).example }}
         idf_version:
-          - v5.3.1
+          - v5.5.4
+          - v6.0.2
     steps:
       - name: Checkout
         uses: actions/checkout@v4

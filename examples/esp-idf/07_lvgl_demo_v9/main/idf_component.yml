@@ -2,8 +2,6 @@
 dependencies:
   waveshare/esp32_s3_touch_lcd_4:
     version: "^2.*"
-  waveshare/custom_io_expander_ch32v003:
-    version: "*"
   lvgl/lvgl:
-    version: ">=8,<10"
+    version: "9.5.0"
     public: true

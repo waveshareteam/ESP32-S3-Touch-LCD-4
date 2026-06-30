@@ -12,7 +12,7 @@ You can find detailed configuration information on the product wiki page
 
 ## Examples
 
-ESP-IDF examples are under [examples/ESP-IDF-v5.3.1](examples/ESP-IDF-v5.3.1/).
+ESP-IDF examples are under [examples/esp-idf](examples/esp-idf/).
 The index is organized from peripheral bring-up examples to LVGL and
 ESP-Brookesia UI examples. Arduino sketches are under
 [examples/Arduino-v3.3.2](examples/Arduino-v3.3.2/).

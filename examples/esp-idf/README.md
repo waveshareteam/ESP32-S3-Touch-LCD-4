@@ -1,8 +1,8 @@
 # ESP-IDF Examples
 
-These examples target ESP-IDF v5.3.1 and the `esp32s3` target. Each numbered
-directory is an independent ESP-IDF project with its own `CMakeLists.txt` and
-`main/` directory.
+These examples target `esp32s3` and are checked in CI with ESP-IDF v5.5.4 and
+v6.0.2. Each numbered directory is an independent ESP-IDF project with its own
+`CMakeLists.txt` and `main/` directory.
 
 ## Learning Path
 
@@ -23,7 +23,7 @@ Start with the peripheral checks, then move to display and UI examples:
 ## Build
 
 ```bash
-cd examples/ESP-IDF-v5.3.1/09_BatteryVoltage_LVGL
+cd examples/esp-idf/09_BatteryVoltage_LVGL
 idf.py set-target esp32s3
 idf.py build
 idf.py -p PORT flash monitor
