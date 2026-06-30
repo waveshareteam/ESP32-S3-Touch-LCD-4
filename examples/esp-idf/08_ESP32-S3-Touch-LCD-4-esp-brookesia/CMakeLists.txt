@@ -4,4 +4,7 @@
 # CMakeLists in this exact order for cmake to work correctly
 cmake_minimum_required(VERSION 3.5)
 include($ENV{IDF_PATH}/tools/cmake/project.cmake)
+if(IDF_VERSION_MAJOR GREATER_EQUAL 6)
+    add_compile_definitions(CONFIG_TWAI_SUPPRESS_DEPRECATE_WARN=1)
+endif()
 project(esp_brookesia_phone_s3_lcd_ev_board)
