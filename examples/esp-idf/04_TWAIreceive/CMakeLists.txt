@@ -5,4 +5,7 @@
 cmake_minimum_required(VERSION 3.5)
 include($ENV{IDF_PATH}/tools/cmake/project.cmake)
 add_compile_options(-fdiagnostics-color=always -Wno-attributes)
+if(IDF_VERSION_MAJOR GREATER_EQUAL 6)
+    add_compile_definitions(CONFIG_TWAI_SUPPRESS_DEPRECATE_WARN=1)
+endif()
 project(02_UART)
