@@ -4,6 +4,9 @@ idf_component_register(
 
 target_compile_options(${COMPONENT_LIB} PUBLIC -Wno-missing-field-initializers)
 
+idf_component_get_property(LVGL_LIB lvgl__lvgl COMPONENT_LIB)
+target_compile_options(${LVGL_LIB} PRIVATE -Wno-error=attributes)
+
 # If want to use custom memory allocation functions, refer to the following macros:
 if(CONFIG_ESP_BROOKESIA_MEMORY_USE_CUSTOM)
     # Get the exact component name
