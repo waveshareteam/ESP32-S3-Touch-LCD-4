@@ -5,8 +5,11 @@ on:
     paths:
       - "examples/esp-idf/**"
       - "docs/CI.md"
+      - "docs/CI_CN.md"
       - "examples/README.md"
+      - "examples/README_CN.md"
       - "README.md"
+      - "README_CN.md"
       - ".github/workflows/esp-idf-examples.yml"
       - ".github/scripts/discover_esp_idf_examples.py"
   push:
@@ -15,8 +18,11 @@ on:
     paths:
       - "examples/esp-idf/**"
       - "docs/CI.md"
+      - "docs/CI_CN.md"
       - "examples/README.md"
+      - "examples/README_CN.md"
       - "README.md"
+      - "README_CN.md"
       - ".github/workflows/esp-idf-examples.yml"
       - ".github/scripts/discover_esp_idf_examples.py"
   workflow_dispatch:

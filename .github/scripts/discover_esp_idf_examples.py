@@ -17,9 +17,13 @@ GLOBAL_EXAMPLE_PATTERNS = (
     ".github/workflows/esp-idf-examples.yml",
     ".github/scripts/discover_esp_idf_examples.py",
     "docs/CI.md",
+    "docs/CI_CN.md",
     "examples/README.md",
+    "examples/README_CN.md",
     "examples/esp-idf/README.md",
+    "examples/esp-idf/README_CN.md",
     "README.md",
+    "README_CN.md",
 )
 
 
