@@ -37,7 +37,7 @@ uint8_t scan_count = 0;
 void setup() {
   Serial.begin(115200);
   Serial.println("Arduino_GFX ESP WiFi Analyzer example");
-  if (!WS_CH32_IO::begin(Wire, WS_CH32_IO::DEFAULT_SDA, WS_CH32_IO::DEFAULT_SCL,
+  if (!WS_CH32_IO::begin(Wire, WS_CH32_IO::DEFAULT_I2C_SDA, WS_CH32_IO::DEFAULT_I2C_SCL,
                          WS_CH32_IO::DEFAULT_I2C_FREQ, &Serial)) {
     Serial.println("CH32V003 IO expander init failed");
   }

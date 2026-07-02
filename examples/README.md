@@ -4,7 +4,7 @@
 
 This directory contains ESP-IDF examples, Arduino sketches, and bundled libraries for ESP32-S3-Touch-LCD-4.
 
-Customers are encouraged to start with the ESP-IDF examples because they are organized as a learning path from simple peripheral bring-up to larger UI applications, and they are automatically built by GitHub Actions. Arduino examples remain available for the Arduino ESP32 workflow, but they are not built by the ESP-IDF CI workflow.
+Customers are encouraged to start with the ESP-IDF examples because they are organized as a learning path from simple peripheral bring-up to larger UI applications. ESP-IDF projects and Arduino sketches both have GitHub Actions coverage when their files change.
 
 ### ESP-IDF Examples
 
@@ -32,8 +32,8 @@ The examples are ordered from board-level bring-up to graphical UI:
 | [09_BatteryVoltage_LVGL](esp-idf/09_BatteryVoltage_LVGL/) | CH32 ADC battery-voltage sampling displayed in LVGL | Display/board monitor |
 | [08_ESP32-S3-Touch-LCD-4-esp-brookesia](esp-idf/08_ESP32-S3-Touch-LCD-4-esp-brookesia/) | ESP-Brookesia Phone UI with calculator, draw panel, and CAN task | Advanced UI |
 
-See [../docs/CI.md](../docs/CI.md) for ESP-IDF example CI rules.
+See [../docs/CI.md](../docs/CI.md) for ESP-IDF and Arduino example CI rules.
 
 ### Arduino Examples
 
-Arduino sketches and bundled libraries are under [Arduino-v3.3.2](Arduino-v3.3.2/). They are not built by the `ESP-IDF examples` workflow. When using Arduino examples, verify the Arduino ESP32 core, board options, partition scheme, and library versions required by the selected sketch.
+Arduino sketches and bundled libraries are under [Arduino-v3.3.2](Arduino-v3.3.2/). The `Arduino examples` workflow compiles changed product sketches with Arduino ESP32 core `3.3.8` and the libraries already stored in [Arduino-v3.3.2/libraries](Arduino-v3.3.2/libraries/). When using Arduino examples locally, keep the board options aligned with CI: ESP32-S3 Dev Module, 16 MB Flash, OPI PSRAM, USB CDC on boot, and the `app3M_fat9M_16MB` partition scheme.

@@ -4,7 +4,7 @@
 
 ESP32-S3-Touch-LCD-4 是 Waveshare 的 4 英寸圆形触控开发板，板载 ESP32-S3、480 x 480 LCD、触摸、16 MB Flash、8 MB PSRAM，以及 RS485、TWAI/CAN、RTC、SD 卡、电池电压检测等常用 HMI 外设。它适合快速开发智能控制面板、工业人机界面、家居网关、仪表盘、照明控制器和带触摸交互的嵌入式应用。
 
-本仓库提供工厂固件、原理图、Arduino 示例和 ESP-IDF 示例。ESP-IDF 示例已按从简单外设到图形界面的顺序整理，并接入 GitHub Actions 自动构建。
+本仓库提供工厂固件、原理图、Arduino 示例和 ESP-IDF 示例。示例已按从简单外设到图形界面的顺序整理；ESP-IDF 示例和 Arduino sketches 会在相关文件改动时由 GitHub Actions 自动检查。
 
 ### 主要特性
 
@@ -25,7 +25,7 @@ ESP32-S3-Touch-LCD-4 是 Waveshare 的 4 英寸圆形触控开发板，板载 ES
 | [examples/esp-idf](examples/esp-idf/README_CN.md) | ESP-IDF 示例，从外设测试到 LVGL/ESP-Brookesia UI |
 | [examples/Arduino-v3.3.2](examples/Arduino-v3.3.2/) | Arduino 示例和随附库 |
 | [examples/esp-idf/ioexpander](examples/esp-idf/ioexpander/README_CN.md) | CH32V003 IO 扩展独立测试程序和详细客户使用说明 |
-| [docs/CI_CN.md](docs/CI_CN.md) | ESP-IDF 示例 CI 规则 |
+| [docs/CI_CN.md](docs/CI_CN.md) | ESP-IDF 和 Arduino 示例 CI 规则 |
 | [Schematic](Schematic/) | V4.0 原理图 PDF |
 | [Firmware](Firmware/) | 工厂固件文件 |
 
@@ -70,7 +70,7 @@ idf.py -p PORT flash monitor
 
 ESP-IDF 示例目录说明见 [examples/README_CN.md](examples/README_CN.md) 和 [examples/esp-idf/README_CN.md](examples/esp-idf/README_CN.md)。
 
-CI 仅构建 ESP-IDF 示例，不构建 Arduino 示例。PR 或 main 分支中只要改动 `examples/esp-idf/`、示例索引、根 README、CI 文档、工作流或示例发现脚本，就会触发 `ESP-IDF examples` 工作流。该工作流使用 ESP-IDF `v5.5.4` 和 `v6.0.2` 两个版本构建目标 `esp32s3`。
+CI 现在包含两个示例工作流。`ESP-IDF examples` 使用 ESP-IDF `v5.5.4` 和 `v6.0.2` 构建改动过的 ESP-IDF 工程，目标为 `esp32s3`。`Arduino examples` 使用 Arduino ESP32 core `3.3.8`、ESP32-S3 Dev Module FQBN、16 MB Flash、OPI PSRAM、USB CDC on boot，以及 `examples/Arduino-v3.3.2/libraries` 下的随附库编译改动过的 sketches。
 
 ### 常见问题
 
@@ -86,9 +86,9 @@ CH32 或同一 I2C 总线上的器件不一定与 ESP32-S3 同步复位。应用
 
 本仓库示例按照原理图分压比例使用 `3.0` 倍换算。如果客户修改了硬件分压或 ADC 参考，需要同步调整示例中的换算常量。
 
-**Arduino 为什么没有 CI**
+**Arduino CI 使用哪些库**
 
-当前自动检查聚焦 ESP-IDF 示例。Arduino 示例和随附库保留在仓库中供客户参考，但不会被 `ESP-IDF examples` 工作流构建。
+Arduino CI 会把 `examples/Arduino-v3.3.2/libraries` 传给 Arduino CLI，因此使用仓库内随附的 `GFX Library for Arduino`、`lvgl`、`SensorLib`、`WS_CH32_IO` 和 `EspSoftwareSerial`，不会从 Library Manager 下载替换版本。
 
 ### 支持
 

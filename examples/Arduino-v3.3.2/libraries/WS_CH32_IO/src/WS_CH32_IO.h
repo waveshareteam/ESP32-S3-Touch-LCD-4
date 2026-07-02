@@ -23,14 +23,26 @@ static constexpr uint8_t DIR_DEFAULT = 0xff;
 static constexpr uint8_t OUT_RESET = 0x00;
 static constexpr uint8_t OUT_DISPLAY_ON = PIN_SYS_EN | PIN_LCD_RST | PIN_LCD_TOUCH_RST;
 
-static constexpr int DEFAULT_SDA = 15;
-static constexpr int DEFAULT_SCL = 7;
+// SensorLib also defines DEFAULT_SDA/DEFAULT_SCL as macros. Clear them before
+// publishing the compatibility aliases below so both bundled libraries can be
+// included from the same sketch.
+#ifdef DEFAULT_SDA
+#undef DEFAULT_SDA
+#endif
+#ifdef DEFAULT_SCL
+#undef DEFAULT_SCL
+#endif
+
+static constexpr int DEFAULT_I2C_SDA = 15;
+static constexpr int DEFAULT_I2C_SCL = 7;
+static constexpr int DEFAULT_SDA = DEFAULT_I2C_SDA;
+static constexpr int DEFAULT_SCL = DEFAULT_I2C_SCL;
 static constexpr uint32_t DEFAULT_I2C_FREQ = 400000;
 static constexpr float ADC_REF_VOLTAGE = 3.3f;
 static constexpr float BATTERY_DIVIDER = 3.0f;
 
-void recoverI2CBus(int sda = DEFAULT_SDA, int scl = DEFAULT_SCL);
-bool begin(TwoWire &wire = Wire, int sda = DEFAULT_SDA, int scl = DEFAULT_SCL,
+void recoverI2CBus(int sda = DEFAULT_I2C_SDA, int scl = DEFAULT_I2C_SCL);
+bool begin(TwoWire &wire = Wire, int sda = DEFAULT_I2C_SDA, int scl = DEFAULT_I2C_SCL,
            uint32_t frequency = DEFAULT_I2C_FREQ, Print *log = nullptr);
 bool probe(TwoWire &wire = Wire, uint8_t address = I2C_ADDRESS);
 bool writeRegister(TwoWire &wire, uint8_t reg, uint8_t value,

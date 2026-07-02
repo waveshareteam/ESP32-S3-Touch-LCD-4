@@ -87,7 +87,7 @@ void setup()
     USBSerial.begin(115200);
     USBSerial.println("LVGL battery voltage example");
 
-    if (!WS_CH32_IO::begin(Wire, WS_CH32_IO::DEFAULT_SDA, WS_CH32_IO::DEFAULT_SCL,
+    if (!WS_CH32_IO::begin(Wire, WS_CH32_IO::DEFAULT_I2C_SDA, WS_CH32_IO::DEFAULT_I2C_SCL,
                            WS_CH32_IO::DEFAULT_I2C_FREQ, &USBSerial)) {
         USBSerial.println("CH32V003 init failed, continuing for display debug");
     }

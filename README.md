@@ -4,7 +4,7 @@
 
 ESP32-S3-Touch-LCD-4 is a Waveshare 4-inch round touch development board based on ESP32-S3. It integrates a 480 x 480 LCD, capacitive touch, 16 MB Flash, 8 MB PSRAM, and common HMI peripherals such as RS485, TWAI/CAN, RTC, SD card, and battery-voltage sensing. It is suitable for smart control panels, industrial HMI projects, home gateways, dashboards, lighting controllers, and touch-enabled embedded products.
 
-This repository provides factory firmware, schematic files, Arduino examples, and ESP-IDF examples. The ESP-IDF examples are organized from basic peripheral bring-up to graphical UI applications and are checked by GitHub Actions.
+This repository provides factory firmware, schematic files, Arduino examples, and ESP-IDF examples. The examples are organized from basic peripheral bring-up to graphical UI applications, and both ESP-IDF and Arduino sketches are checked by GitHub Actions when related files change.
 
 ### Key Features
 
@@ -25,7 +25,7 @@ This repository provides factory firmware, schematic files, Arduino examples, an
 | [examples/esp-idf](examples/esp-idf/) | ESP-IDF examples from peripheral tests to LVGL/ESP-Brookesia UI |
 | [examples/Arduino-v3.3.2](examples/Arduino-v3.3.2/) | Arduino sketches and bundled libraries |
 | [examples/esp-idf/ioexpander](examples/esp-idf/ioexpander/) | Standalone CH32V003 IO expander test and detailed customer guide |
-| [docs/CI.md](docs/CI.md) | ESP-IDF example CI rules |
+| [docs/CI.md](docs/CI.md) | ESP-IDF and Arduino example CI rules |
 | [Schematic](Schematic/) | V4.0 schematic PDF |
 | [Firmware](Firmware/) | Factory firmware image |
 
@@ -70,7 +70,7 @@ If the display, touch, or CH32 register writes occasionally fail after a quick r
 
 See [examples/README.md](examples/README.md) and [examples/esp-idf/README.md](examples/esp-idf/README.md) for the example map.
 
-CI builds ESP-IDF examples only; Arduino sketches are intentionally ignored. Pull requests or pushes to `main` that change `examples/esp-idf/`, the example indexes, the root README, CI documentation, the workflow, or the example discovery script trigger the `ESP-IDF examples` workflow. The workflow builds target `esp32s3` with ESP-IDF `v5.5.4` and `v6.0.2`.
+CI has two example workflows. `ESP-IDF examples` builds changed ESP-IDF projects for target `esp32s3` with ESP-IDF `v5.5.4` and `v6.0.2`. `Arduino examples` compiles changed sketches with Arduino ESP32 core `3.3.8`, the ESP32-S3 Dev Module FQBN, 16 MB Flash, OPI PSRAM, USB CDC on boot, and the bundled libraries under `examples/Arduino-v3.3.2/libraries`.
 
 ### FAQ
 
@@ -86,9 +86,9 @@ CH32 or other devices on the same I2C bus may not reset at the same time as ESP3
 
 The examples use a divider ratio of `3.0` according to the schematic. If the hardware divider or ADC reference is changed, update the conversion constants in the examples.
 
-**Why is Arduino not built by CI?**
+**Which libraries does Arduino CI use?**
 
-The current automated checks focus on ESP-IDF examples. Arduino sketches and bundled libraries remain in the repository for customers, but they are not built by the `ESP-IDF examples` workflow.
+Arduino CI passes `examples/Arduino-v3.3.2/libraries` to Arduino CLI, so it uses the repository versions of `GFX Library for Arduino`, `lvgl`, `SensorLib`, `WS_CH32_IO`, and `EspSoftwareSerial` instead of downloading replacements from Library Manager.
 
 ### Support
 
