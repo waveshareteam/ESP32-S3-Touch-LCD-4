@@ -6,7 +6,7 @@
 
 Source-maintained firmware should live under `examples/esp-idf/` or another documented source directory with its own `CMakeLists.txt`, component manifest, and validation path.
 
-CI build outputs are packaged by `releases/package_firmware.py` and uploaded as workflow artifacts. Each generated zip contains `manifest.json`, `flash.sh`, `flash.bat`, `flash_args.txt`, and the binaries needed by esptool.
+CI build outputs are packaged by `releases/package_firmware.py` and uploaded as workflow artifacts. Before flashing artifacts to ESP32-S3-LCD-4, prefer display/peripheral examples or firmware paths that tolerate missing GT911 touch input. Each generated zip contains `manifest.json`, `flash.sh`, `flash.bat`, `flash_args.txt`, and the binaries needed by esptool.
 
 For local release packaging, build the target project first and run the Python script from the repository root. Generated archives are written under `releases/dist/` by default.
 

@@ -11,6 +11,7 @@
 TouchDrvGT911 GT911;
 int16_t x[5], y[5];
 uint8_t gt911_i2c_addr = 0;
+bool gt911_available = false;
 
 float angleX = 1;
 float angleY = 0;
@@ -44,8 +45,8 @@ Arduino_RGB_Display *gfx = new Arduino_RGB_Display(
 #if LV_USE_LOG != 0
 /* Serial debugging */
 void my_print(const char *buf) {
-  Serial.printf(buf);
-  Serial.flush();
+  USBSerial.printf("%s", buf);
+  USBSerial.flush();
 }
 #endif
 
@@ -78,6 +79,10 @@ void example_increase_reboot(void *arg) {
 
 /*Read the touchpad*/
 void my_touchpad_read(lv_indev_drv_t *indev_driver, lv_indev_data_t *data) {
+  if (!gt911_available) {
+    data->state = LV_INDEV_STATE_REL;
+    return;
+  }
   uint8_t touched = GT911.getPoint(x, y, GT911.getSupportTouchPoint());
 
   if (touched > 0) {
@@ -186,18 +191,16 @@ void setup() {
     USBSerial.println("CH32V003 IO expander init failed");
   }
 
-  if (!init_gt911_with_probe(15, 7)) {
-    while (1) {
-      USBSerial.println("Failed to find GT911 - check your wiring!");
-      delay(1000);
-    }
+  gt911_available = init_gt911_with_probe(15, 7);
+  if (gt911_available) {
+    GT911.setHomeButtonCallback([](void *user_data) {
+      USBSerial.println("Home button pressed!");
+    },
+                                NULL);
+    GT911.setMaxTouchPoint(1);  // max is 5
+  } else {
+    USBSerial.println("GT911 not found; LVGL will run without pointer input for ESP32-S3-LCD-4.");
   }
-
-  GT911.setHomeButtonCallback([](void *user_data) {
-    USBSerial.println("Home button pressed!");
-  },
-                              NULL);
-  GT911.setMaxTouchPoint(1);  // max is 5
 
   gfx->begin();
 
@@ -236,12 +239,15 @@ void setup() {
   // disp_drv.rotated = LV_DISP_ROT_90;
   lv_disp_drv_register(&disp_drv);
 
-  /*Initialize the (dummy) input device driver*/
-  static lv_indev_drv_t indev_drv;
-  lv_indev_drv_init(&indev_drv);
-  indev_drv.type = LV_INDEV_TYPE_POINTER;
-  indev_drv.read_cb = my_touchpad_read;
-  lv_indev_drv_register(&indev_drv);
+  if (gt911_available) {
+    static lv_indev_drv_t indev_drv;
+    lv_indev_drv_init(&indev_drv);
+    indev_drv.type = LV_INDEV_TYPE_POINTER;
+    indev_drv.read_cb = my_touchpad_read;
+    lv_indev_drv_register(&indev_drv);
+  } else {
+    USBSerial.println("Skip LVGL touch input registration.");
+  }
 
   const esp_timer_create_args_t lvgl_tick_timer_args = {
     .callback = &example_increase_lvgl_tick,

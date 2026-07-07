@@ -2,9 +2,9 @@
 
 [English](README.md)
 
-本目录包含 ESP32-S3-Touch-LCD-4 的 ESP-IDF 示例、Arduino 示例和随附库。
+本目录包含 ESP32-S3-Touch-LCD-4 和 ESP32-S3-LCD-4 的 ESP-IDF 示例、Arduino 示例和随附库。两款板共用显示和主要外设；只有 ESP32-S3-Touch-LCD-4 带 GT911 触摸。
 
-建议客户优先查看 ESP-IDF 示例，因为这些示例已经整理为从简单到复杂的学习路径。ESP-IDF 工程和 Arduino sketches 在相关文件改动时都会由 GitHub Actions 检查。
+建议客户优先查看 ESP-IDF 示例，因为这些示例已经整理为从简单到复杂的学习路径。使用 ESP32-S3-LCD-4 时，建议先烧录显示和外设示例，再尝试依赖触摸输入的 UI 固件。ESP-IDF 工程和 Arduino sketches 在相关文件改动时都会由 GitHub Actions 检查。
 
 ### ESP-IDF 示例
 
@@ -36,4 +36,4 @@ ESP-IDF 和 Arduino 示例 CI 规则见 [../docs/CI_CN.md](../docs/CI_CN.md)，�
 
 ### Arduino 示例
 
-Arduino sketches 和随附库位于 [arduino](arduino/)。`Build Examples` 工作流使用 Arduino ESP32 core `3.3.10` 以及 [arduino/libraries](arduino/libraries/) 中当前仓库自带的库编译第一方产品示例。客户本地使用时，建议与 CI 保持一致：ESP32-S3 Dev Module、16 MB Flash、OPI PSRAM、USB CDC on boot，以及 `app3M_fat9M_16MB` 分区。
+Arduino sketches 和随附库位于 [arduino](arduino/)。`03_Drawing_points` 和 `09_LVGL_Widgets` 会在运行时探测 GT911；烧录到 ESP32-S3-LCD-4 时会跳过触摸输入并继续运行。`Build Examples` 工作流使用 Arduino ESP32 core `3.3.10` 以及 [arduino/libraries](arduino/libraries/) 中当前仓库自带的库编译第一方产品示例。客户本地使用时，建议与 CI 保持一致：ESP32-S3 Dev Module、16 MB Flash、OPI PSRAM、USB CDC on boot，以及 `app3M_fat9M_16MB` 分区。

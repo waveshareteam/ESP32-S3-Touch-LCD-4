@@ -11,6 +11,7 @@ HWCDC USBSerial;
 TouchDrvGT911 GT911;
 int16_t x[5], y[5];
 uint8_t gt911_i2c_addr = 0;
+bool gt911_available = false;
 
 Arduino_DataBus *bus = new Arduino_SWSPI(
     GFX_NOT_DEFINED /* DC */, 42 /* CS */,
@@ -91,25 +92,32 @@ void setup() {
     USBSerial.println("CH32V003 IO expander init failed");
   }
 
-  if (!init_gt911_with_probe(15, 7)) {
-    while (1) {
-      USBSerial.println("Failed to find GT911 - check your wiring!");
-      delay(1000);
-    }
-  }
-
-  GT911.setHomeButtonCallback([](void *user_data) {
-    USBSerial.println("Home button pressed!");
-  },
-                              NULL);
-  GT911.setMaxTouchPoint(1); // max is 5
-
   gfx->begin();
   gfx->fillScreen(WHITE);
+
+  gt911_available = init_gt911_with_probe(15, 7);
+  if (gt911_available) {
+    GT911.setHomeButtonCallback([](void *user_data) {
+      USBSerial.println("Home button pressed!");
+    },
+                                NULL);
+    GT911.setMaxTouchPoint(1); // max is 5
+  } else {
+    USBSerial.println("GT911 not found; running in LCD-only mode for ESP32-S3-LCD-4.");
+    gfx->setTextColor(BLACK);
+    gfx->setTextSize(2);
+    gfx->setCursor(48, 220);
+    gfx->println("LCD-only mode");
+    gfx->setCursor(48, 250);
+    gfx->println("GT911 touch not found");
+  }
 }
 
 void loop() {
-
+  if (!gt911_available) {
+    delay(100);
+    return;
+  }
   uint8_t touched = GT911.getPoint(x, y, GT911.getSupportTouchPoint());
   if (touched > 0) {
     USBSerial.print(millis());

@@ -4,6 +4,8 @@
 
 This example verifies display startup and rendering behavior with LVGL v9 on ESP32-S3-Touch-LCD-4. It starts the Waveshare BSP display stack and runs `lv_demo_benchmark()`.
 
+ESP32-S3-LCD-4 shares the LCD and peripheral paths but does not populate GT911. The benchmark itself is display-focused, but the BSP startup path is touch-capable; adapt startup if the LCD-only board must skip GT911 probing.
+
 ### Dependencies
 
 | Component | Version |
@@ -29,6 +31,7 @@ idf.py -p PORT flash monitor
 - LCD backlight turns on.
 - The screen runs the LVGL v9 benchmark demo.
 - Serial monitor shows LVGL/BSP startup logs.
+- ESP32-S3-LCD-4 has no touch input even when the benchmark display path is otherwise suitable.
 
 ### Troubleshooting
 

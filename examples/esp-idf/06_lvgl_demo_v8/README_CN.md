@@ -4,6 +4,8 @@
 
 本示例用于验证 ESP32-S3-Touch-LCD-4 的 BSP 显示初始化、触摸初始化和 LVGL v8 渲染流程。程序启动后调用 Waveshare BSP 初始化屏幕，然后运行 `lv_demo_widgets()`。
 
+ESP32-S3-LCD-4 共用 LCD 和 CH32 路径，但不带 GT911。此示例可直接用于 Touch 版本；用于无触摸版本时，请选择无触摸显示路径，或在触摸探测影响启动时适配 BSP 启动流程。
+
 ### 依赖组件
 
 | 组件 | 版本 |
@@ -30,7 +32,7 @@ idf.py -p PORT flash monitor
 
 - LCD 背光点亮。
 - 屏幕显示 LVGL widgets demo。
-- 触摸可以操作 LVGL 控件。
+- ESP32-S3-Touch-LCD-4 上可通过触摸操作 LVGL 控件。
 
 ### 常见问题
 

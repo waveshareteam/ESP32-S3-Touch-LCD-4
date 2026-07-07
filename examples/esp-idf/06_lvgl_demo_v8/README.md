@@ -4,6 +4,8 @@
 
 This example verifies BSP display startup, touch initialization, and LVGL v8 rendering on ESP32-S3-Touch-LCD-4. It starts the Waveshare BSP display stack and runs `lv_demo_widgets()`.
 
+ESP32-S3-LCD-4 shares the LCD and CH32 paths but does not populate GT911. Use this example directly on the Touch variant; for the LCD-only variant, use a display-only path or adapt BSP startup if touch probing blocks boot.
+
 ### Dependencies
 
 | Component | Version |
@@ -30,7 +32,7 @@ The first build downloads BSP and LVGL managed components, so it may take longer
 
 - LCD backlight turns on.
 - The screen shows the LVGL widgets demo.
-- Touch can operate LVGL controls.
+- Touch can operate LVGL controls on ESP32-S3-Touch-LCD-4.
 
 ### Troubleshooting
 

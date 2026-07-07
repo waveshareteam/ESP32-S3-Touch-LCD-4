@@ -4,6 +4,8 @@
 
 This example demonstrates a larger ESP-Brookesia Phone UI application structure on ESP32-S3-Touch-LCD-4. After starting BSP display and touch, it creates a 480 x 480 dark Phone UI and registers calculator and draw-panel apps. It also includes a CAN transmit task, making it a useful reference for a more complex project layout.
 
+This is a touch-driven UI example. ESP32-S3-LCD-4 does not populate GT911, so flash this firmware to the LCD-only board only after adding an alternate input path or a no-touch navigation mode.
+
 ### Dependencies
 
 | Component | Version |
@@ -39,7 +41,7 @@ idf.py -p PORT flash monitor
 ### Expected Behavior
 
 - The screen shows the ESP-Brookesia Phone UI.
-- Touch can open the calculator and draw-panel apps.
+- Touch can open the calculator and draw-panel apps on ESP32-S3-Touch-LCD-4.
 - Serial monitor shows display startup, app registration, and CAN task logs.
 
 ### Troubleshooting

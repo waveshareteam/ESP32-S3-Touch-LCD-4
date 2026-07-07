@@ -2,9 +2,9 @@
 
 [中文](README_CN.md)
 
-This directory contains ESP-IDF examples, Arduino sketches, and bundled libraries for ESP32-S3-Touch-LCD-4.
+This directory contains ESP-IDF examples, Arduino sketches, and bundled libraries for ESP32-S3-Touch-LCD-4 and ESP32-S3-LCD-4. The boards share the display and peripherals; only ESP32-S3-Touch-LCD-4 has the GT911 touch panel.
 
-Customers are encouraged to start with the ESP-IDF examples because they are organized as a learning path from simple peripheral bring-up to larger UI applications. ESP-IDF projects and Arduino sketches both have GitHub Actions coverage when their files change.
+Customers are encouraged to start with the ESP-IDF examples because they are organized as a learning path from simple peripheral bring-up to larger UI applications. When using ESP32-S3-LCD-4, start with display and peripheral examples before flashing touch-dependent UI firmware. ESP-IDF projects and Arduino sketches both have GitHub Actions coverage when their files change.
 
 ### ESP-IDF Examples
 
@@ -36,4 +36,4 @@ See [../docs/CI.md](../docs/CI.md) for ESP-IDF and Arduino example CI rules, and
 
 ### Arduino Examples
 
-Arduino sketches and bundled libraries are under [arduino](arduino/). The `Build Examples` workflow compiles first-party product sketches with Arduino ESP32 core `3.3.10` and the libraries already stored in [arduino/libraries](arduino/libraries/). When using Arduino examples locally, keep the board options aligned with CI: ESP32-S3 Dev Module, 16 MB Flash, OPI PSRAM, USB CDC on boot, and the `app3M_fat9M_16MB` partition scheme.
+Arduino sketches and bundled libraries are under [arduino](arduino/). `03_Drawing_points` and `09_LVGL_Widgets` probe GT911 at runtime and continue without pointer input on ESP32-S3-LCD-4. The `Build Examples` workflow compiles first-party product sketches with Arduino ESP32 core `3.3.10` and the libraries already stored in [arduino/libraries](arduino/libraries/). When using Arduino examples locally, keep the board options aligned with CI: ESP32-S3 Dev Module, 16 MB Flash, OPI PSRAM, USB CDC on boot, and the `app3M_fat9M_16MB` partition scheme.

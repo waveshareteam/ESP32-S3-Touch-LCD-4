@@ -2,6 +2,10 @@
 
 This directory contains helper scripts for packaging build outputs into flashable firmware archives.
 
+## Board Variant Note
+
+The generated artifacts target the shared ESP32-S3-Touch-LCD-4 / ESP32-S3-LCD-4 hardware family, but ESP32-S3-LCD-4 does not populate the GT911 touch controller. Display and peripheral firmware can usually be flashed to either board. Touch-driven LVGL or ESP-Brookesia firmware should be used on ESP32-S3-Touch-LCD-4, or adapted to run without pointer input before flashing to ESP32-S3-LCD-4.
+
 ## ESP-IDF
 
 Build an example first, then package the generated build directory:

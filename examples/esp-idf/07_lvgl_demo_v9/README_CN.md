@@ -4,6 +4,8 @@
 
 本示例用于验证 ESP32-S3-Touch-LCD-4 在 LVGL v9 下的显示初始化和渲染性能。程序启动 Waveshare BSP 显示栈后运行 `lv_demo_benchmark()`。
 
+ESP32-S3-LCD-4 共用 LCD 和外设路径，但不带 GT911。benchmark 本身以显示为主，不过 BSP 启动路径具备触摸初始化能力；如果无触摸板需要跳过 GT911 探测，请先适配启动流程。
+
 ### 依赖组件
 
 | 组件 | 版本 |
@@ -29,6 +31,7 @@ idf.py -p PORT flash monitor
 - LCD 背光点亮。
 - 屏幕运行 LVGL v9 benchmark demo。
 - 串口输出 LVGL/BSP 初始化日志。
+- ESP32-S3-LCD-4 没有触摸输入，即使 benchmark 显示路径本身可用也不能提供触摸交互。
 
 ### 常见问题
 

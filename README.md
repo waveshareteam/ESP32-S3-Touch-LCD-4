@@ -1,10 +1,17 @@
-# Waveshare ESP32-S3-Touch-LCD-4
+# Waveshare ESP32-S3-Touch-LCD-4 / ESP32-S3-LCD-4
 
 [中文](README_CN.md)
 
-ESP32-S3-Touch-LCD-4 is a Waveshare 4-inch round touch development board based on ESP32-S3. It integrates a 480 x 480 LCD, capacitive touch, 16 MB Flash, 8 MB PSRAM, and common HMI peripherals such as RS485, TWAI/CAN, RTC, SD card, and battery-voltage sensing. It is suitable for smart control panels, industrial HMI projects, home gateways, dashboards, lighting controllers, and touch-enabled embedded products.
+This repository supports the Waveshare ESP32-S3-Touch-LCD-4 and ESP32-S3-LCD-4 4-inch round ESP32-S3 boards. The two boards share the 480 x 480 LCD, 16 MB Flash, 8 MB PSRAM, RS485, TWAI/CAN, RTC, SD card, battery-voltage sensing, and CH32V003 helper controller; the Touch variant adds a GT911 capacitive touch panel.
 
 This repository provides factory firmware, schematic files, Arduino examples, and ESP-IDF examples. The examples are organized from basic peripheral bring-up to graphical UI applications, and both ESP-IDF and Arduino sketches are checked by GitHub Actions when related files change.
+
+### Supported Board Variants
+
+| Board | Touch controller | Notes |
+| --- | --- | --- |
+| ESP32-S3-Touch-LCD-4 | GT911 capacitive touch | Use all display, touch, LVGL, and ESP-Brookesia examples. |
+| ESP32-S3-LCD-4 | No GT911 touch panel | Display, CH32, battery, SD, RS485, TWAI/CAN, RTC, and non-touch UI paths are shared. Touch-specific examples compile in CI, but firmware that requires GT911 input should be used in display-only mode or adapted before flashing. |
 
 ### Key Features
 
@@ -13,7 +20,7 @@ This repository provides factory firmware, schematic files, Arduino examples, an
 | MCU | ESP32-S3 with 2.4 GHz Wi-Fi and Bluetooth LE 5 |
 | Memory | 16 MB Flash and 8 MB PSRAM |
 | Display | 4-inch 480 x 480 LCD with LVGL and ESP-Brookesia examples |
-| Touch | Capacitive touch initialized through the BSP display interface |
+| Touch | GT911 capacitive touch on ESP32-S3-Touch-LCD-4; not populated on ESP32-S3-LCD-4 |
 | IO expander | CH32V003 over I2C for backlight, LCD/touch reset, buzzer, power enable, and battery ADC |
 | Peripherals | RS485, TWAI/CAN, RTC, SD card, battery-voltage monitor |
 | Main frameworks | ESP-IDF and Arduino ESP32 |
@@ -49,7 +56,7 @@ Recommended learning order:
 
 1. [ioexpander](examples/esp-idf/ioexpander/): verify CH32, backlight, reset pins, buzzer, and battery ADC first.
 2. [01_RS485_Test](examples/esp-idf/01_RS485_Test/) to [05_TWAItransmit](examples/esp-idf/05_TWAItransmit/): validate onboard peripherals one by one.
-3. [06_lvgl_demo_v8](examples/esp-idf/06_lvgl_demo_v8/) or [07_lvgl_demo_v9](examples/esp-idf/07_lvgl_demo_v9/): validate display, touch, and LVGL.
+3. [06_lvgl_demo_v8](examples/esp-idf/06_lvgl_demo_v8/) or [07_lvgl_demo_v9](examples/esp-idf/07_lvgl_demo_v9/): validate display, touch-capable BSP startup, and LVGL. On ESP32-S3-LCD-4, treat GT911 input as unavailable unless the example explicitly supports display-only mode.
 4. [09_BatteryVoltage_LVGL](examples/esp-idf/09_BatteryVoltage_LVGL/): learn how to show battery voltage in an LVGL screen.
 5. [08_ESP32-S3-Touch-LCD-4-esp-brookesia](examples/esp-idf/08_ESP32-S3-Touch-LCD-4-esp-brookesia/): inspect a larger ESP-Brookesia UI application structure.
 

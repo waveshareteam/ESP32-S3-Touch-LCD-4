@@ -1,10 +1,17 @@
-# Waveshare ESP32-S3-Touch-LCD-4
+# Waveshare ESP32-S3-Touch-LCD-4 / ESP32-S3-LCD-4
 
 [English](README.md)
 
-ESP32-S3-Touch-LCD-4 是 Waveshare 的 4 英寸圆形触控开发板，板载 ESP32-S3、480 x 480 LCD、触摸、16 MB Flash、8 MB PSRAM，以及 RS485、TWAI/CAN、RTC、SD 卡、电池电压检测等常用 HMI 外设。它适合快速开发智能控制面板、工业人机界面、家居网关、仪表盘、照明控制器和带触摸交互的嵌入式应用。
+本仓库同时适用于 Waveshare ESP32-S3-Touch-LCD-4 和 ESP32-S3-LCD-4 两款 4 英寸圆形 ESP32-S3 板卡。两者共用 480 x 480 LCD、16 MB Flash、8 MB PSRAM、RS485、TWAI/CAN、RTC、SD 卡、电池电压检测和 CH32V003 辅助控制器；Touch 版本额外带 GT911 电容触摸。
 
 本仓库提供工厂固件、原理图、Arduino 示例和 ESP-IDF 示例。示例已按从简单外设到图形界面的顺序整理；ESP-IDF 示例和 Arduino sketches 会在相关文件改动时由 GitHub Actions 自动检查。
+
+### 支持的板卡版本
+
+| 板卡 | 触摸控制器 | 说明 |
+| --- | --- | --- |
+| ESP32-S3-Touch-LCD-4 | GT911 电容触摸 | 可直接使用显示、触摸、LVGL 和 ESP-Brookesia 示例。 |
+| ESP32-S3-LCD-4 | 不带 GT911 触摸 | 显示、CH32、电池、SD、RS485、TWAI/CAN、RTC 和非触摸 UI 路径共用。触摸相关示例会在 CI 中编译，但依赖 GT911 输入的固件烧录到无触摸版本时应按无触摸模式运行，或在烧录前做相应适配。 |
 
 ### 主要特性
 
@@ -13,7 +20,7 @@ ESP32-S3-Touch-LCD-4 是 Waveshare 的 4 英寸圆形触控开发板，板载 ES
 | 主控 | ESP32-S3，2.4 GHz Wi-Fi，Bluetooth LE 5 |
 | 存储 | 16 MB Flash，8 MB PSRAM |
 | 显示 | 4 英寸 480 x 480 LCD，支持 LVGL 和 ESP-Brookesia 示例 |
-| 触摸 | 电容触摸，由 BSP 显示接口初始化 |
+| 触摸 | ESP32-S3-Touch-LCD-4 带 GT911 电容触摸；ESP32-S3-LCD-4 不带触摸 |
 | IO 扩展 | CH32V003，通过 I2C 控制背光、LCD/触摸复位、蜂鸣器、电源使能并读取电池 ADC |
 | 常用外设 | RS485、TWAI/CAN、RTC、SD 卡、电池电压检测 |
 | 主要开发方式 | ESP-IDF、Arduino ESP32 |
@@ -49,7 +56,7 @@ idf.py -p PORT flash monitor
 
 1. [ioexpander](examples/esp-idf/ioexpander/README_CN.md)：先确认 CH32、背光、复位、蜂鸣器和电池 ADC 正常。
 2. [01_RS485_Test](examples/esp-idf/01_RS485_Test/README_CN.md) 到 [05_TWAItransmit](examples/esp-idf/05_TWAItransmit/README_CN.md)：逐个验证板载外设。
-3. [06_lvgl_demo_v8](examples/esp-idf/06_lvgl_demo_v8/README_CN.md) 或 [07_lvgl_demo_v9](examples/esp-idf/07_lvgl_demo_v9/README_CN.md)：验证显示、触摸和 LVGL。
+3. [06_lvgl_demo_v8](examples/esp-idf/06_lvgl_demo_v8/README_CN.md) 或 [07_lvgl_demo_v9](examples/esp-idf/07_lvgl_demo_v9/README_CN.md)：验证显示、带触摸 BSP 启动流程和 LVGL。ESP32-S3-LCD-4 无 GT911，请将触摸输入视为不可用，除非示例明确支持无触摸模式。
 4. [09_BatteryVoltage_LVGL](examples/esp-idf/09_BatteryVoltage_LVGL/README_CN.md)：学习在 LVGL 界面中显示电池电压。
 5. [08_ESP32-S3-Touch-LCD-4-esp-brookesia](examples/esp-idf/08_ESP32-S3-Touch-LCD-4-esp-brookesia/README_CN.md)：查看较完整的 ESP-Brookesia UI 应用结构。
 
