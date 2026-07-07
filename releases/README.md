@@ -28,11 +28,11 @@ arduino-cli compile \
   --libraries examples/arduino/libraries \
   --export-binaries \
   --output-dir build/01_HelloWorld-3.3.10 \
-  examples/arduino/examples/01_HelloWorld
+  examples/arduino/01_HelloWorld
 
 python3 releases/package_firmware.py \
   --framework arduino \
-  --project examples/arduino/examples/01_HelloWorld \
+  --project examples/arduino/01_HelloWorld \
   --build-dir build/01_HelloWorld-3.3.10 \
   --framework-version 3.3.10 \
   --target esp32s3

@@ -18,6 +18,6 @@ Use `sdkconfig.defaults` for stable example defaults that should be shared with 
 
 ## Example Coverage
 
-ESP-IDF examples live under `examples/esp-idf/`. Arduino product sketches live under `examples/arduino/examples/` and use bundled libraries from `examples/arduino/libraries/`.
+ESP-IDF examples live under `examples/esp-idf/`. Arduino product sketches live under `examples/arduino/` and use bundled libraries from `examples/arduino/libraries/`.
 
 Bundled library examples are not part of product CI unless a maintainer intentionally expands the CI scope.
