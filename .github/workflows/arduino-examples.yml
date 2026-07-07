@@ -37,7 +37,7 @@ permissions:
 
 env:
   ARDUINO_CLI_VERSION: 1.5.0
-  ARDUINO_ESP32_CORE_VERSION: 3.3.8
+  ARDUINO_ESP32_CORE_VERSION: 3.3.10
   ARDUINO_BOARD_PACKAGE_URL: https://espressif.github.io/arduino-esp32/package_esp32_index.json
   ARDUINO_FQBN: esp32:esp32:esp32s3:USBMode=hwcdc,CDCOnBoot=cdc,FlashSize=16M,PSRAM=opi,PartitionScheme=app3M_fat9M_16MB
   ARDUINO_LIBRARIES: examples/Arduino-v3.3.2/libraries
@@ -95,7 +95,7 @@ jobs:
           fi
 
   compile:
-    name: Compile ${{ matrix.sketch }} (Arduino ESP32 3.3.8)
+    name: Compile ${{ matrix.sketch }} (Arduino ESP32 3.3.10)
     needs: discover
     if: needs.discover.outputs.has_sketches == 'true'
     runs-on: ubuntu-latest

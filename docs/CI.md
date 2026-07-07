@@ -9,7 +9,7 @@ This repository uses GitHub Actions to build ESP-IDF examples and compile Arduin
 | Workflow | Scope | Toolchain |
 | --- | --- | --- |
 | `ESP-IDF examples` | ESP-IDF projects under `examples/esp-idf/` | ESP-IDF `v5.5.4` and `v6.0.2` |
-| `Arduino examples` | Product sketches under `examples/Arduino-v3.3.2/examples/` | Arduino CLI `1.5.0` and ESP32 Arduino core `3.3.8` |
+| `Arduino examples` | Product sketches under `examples/Arduino-v3.3.2/examples/` | Arduino CLI `1.5.0` and ESP32 Arduino core `3.3.10` |
 
 They run when:
 
@@ -64,7 +64,7 @@ The Arduino workflow compiles with:
 | Item | Value |
 | --- | --- |
 | Arduino CLI | `1.5.0` |
-| ESP32 Arduino core | `esp32:esp32@3.3.8` |
+| ESP32 Arduino core | `esp32:esp32@3.3.10` |
 | FQBN | `esp32:esp32:esp32s3` |
 | Board options | `USBMode=hwcdc`, `CDCOnBoot=cdc`, `FlashSize=16M`, `PSRAM=opi`, `PartitionScheme=app3M_fat9M_16MB` |
 | Libraries | `examples/Arduino-v3.3.2/libraries` |

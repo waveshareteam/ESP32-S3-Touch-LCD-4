@@ -27,7 +27,8 @@ ESP32-S3-Touch-LCD-4 是 Waveshare 的 4 英寸圆形触控开发板，板载 ES
 | [examples/esp-idf/ioexpander](examples/esp-idf/ioexpander/README_CN.md) | CH32V003 IO 扩展独立测试程序和详细客户使用说明 |
 | [docs/CI_CN.md](docs/CI_CN.md) | ESP-IDF 和 Arduino 示例 CI 规则 |
 | [Schematic](Schematic/) | V4.0 原理图 PDF |
-| [Firmware](Firmware/) | 工厂固件文件 |
+| [Firmware](Firmware/) | 工厂固件文件和烧录/恢复说明 |
+| [docs/firmware_CN.md](docs/firmware_CN.md) | 固件产物策略和 CI 边界 |
 
 ### 快速开始 ESP-IDF
 
@@ -70,7 +71,7 @@ idf.py -p PORT flash monitor
 
 ESP-IDF 示例目录说明见 [examples/README_CN.md](examples/README_CN.md) 和 [examples/esp-idf/README_CN.md](examples/esp-idf/README_CN.md)。
 
-CI 现在包含两个示例工作流。`ESP-IDF examples` 使用 ESP-IDF `v5.5.4` 和 `v6.0.2` 构建改动过的 ESP-IDF 工程，目标为 `esp32s3`。`Arduino examples` 使用 Arduino ESP32 core `3.3.8`、ESP32-S3 Dev Module FQBN、16 MB Flash、OPI PSRAM、USB CDC on boot，以及 `examples/Arduino-v3.3.2/libraries` 下的随附库编译改动过的 sketches。
+CI 现在包含两个示例工作流。`ESP-IDF examples` 使用 ESP-IDF `v5.5.4` 和 `v6.0.2` 构建改动过的 ESP-IDF 工程，目标为 `esp32s3`。`Arduino examples` 使用 Arduino ESP32 core `3.3.10`、ESP32-S3 Dev Module FQBN、16 MB Flash、OPI PSRAM、USB CDC on boot，以及 `examples/Arduino-v3.3.2/libraries` 下的随附库编译改动过的 sketches。
 
 ### 常见问题
 

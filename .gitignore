@@ -8,3 +8,8 @@ managed_components/
 # Python local cache
 __pycache__/
 *.py[cod]
+
+# Downloaded or generated release artifacts
+release-artifacts/
+releases/dist/
+releases/downloads/

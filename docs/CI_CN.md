@@ -9,7 +9,7 @@
 | 工作流 | 范围 | 工具链 |
 | --- | --- | --- |
 | `ESP-IDF examples` | `examples/esp-idf/` 下的 ESP-IDF 工程 | ESP-IDF `v5.5.4` 和 `v6.0.2` |
-| `Arduino examples` | `examples/Arduino-v3.3.2/examples/` 下的产品 sketches | Arduino CLI `1.5.0` 和 ESP32 Arduino core `3.3.8` |
+| `Arduino examples` | `examples/Arduino-v3.3.2/examples/` 下的产品 sketches | Arduino CLI `1.5.0` 和 ESP32 Arduino core `3.3.10` |
 
 触发条件：
 
@@ -64,7 +64,7 @@ Arduino 工作流编译配置：
 | 项目 | 值 |
 | --- | --- |
 | Arduino CLI | `1.5.0` |
-| ESP32 Arduino core | `esp32:esp32@3.3.8` |
+| ESP32 Arduino core | `esp32:esp32@3.3.10` |
 | FQBN | `esp32:esp32:esp32s3` |
 | 板卡选项 | `USBMode=hwcdc`、`CDCOnBoot=cdc`、`FlashSize=16M`、`PSRAM=opi`、`PartitionScheme=app3M_fat9M_16MB` |
 | 库路径 | `examples/Arduino-v3.3.2/libraries` |

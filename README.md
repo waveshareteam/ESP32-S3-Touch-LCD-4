@@ -27,7 +27,8 @@ This repository provides factory firmware, schematic files, Arduino examples, an
 | [examples/esp-idf/ioexpander](examples/esp-idf/ioexpander/) | Standalone CH32V003 IO expander test and detailed customer guide |
 | [docs/CI.md](docs/CI.md) | ESP-IDF and Arduino example CI rules |
 | [Schematic](Schematic/) | V4.0 schematic PDF |
-| [Firmware](Firmware/) | Factory firmware image |
+| [Firmware](Firmware/) | Factory firmware image and flashing/recovery notes |
+| [docs/firmware.md](docs/firmware.md) | Firmware artifact policy and CI boundary |
 
 ### ESP-IDF Quick Start
 
@@ -70,7 +71,7 @@ If the display, touch, or CH32 register writes occasionally fail after a quick r
 
 See [examples/README.md](examples/README.md) and [examples/esp-idf/README.md](examples/esp-idf/README.md) for the example map.
 
-CI has two example workflows. `ESP-IDF examples` builds changed ESP-IDF projects for target `esp32s3` with ESP-IDF `v5.5.4` and `v6.0.2`. `Arduino examples` compiles changed sketches with Arduino ESP32 core `3.3.8`, the ESP32-S3 Dev Module FQBN, 16 MB Flash, OPI PSRAM, USB CDC on boot, and the bundled libraries under `examples/Arduino-v3.3.2/libraries`.
+CI has two example workflows. `ESP-IDF examples` builds changed ESP-IDF projects for target `esp32s3` with ESP-IDF `v5.5.4` and `v6.0.2`. `Arduino examples` compiles changed sketches with Arduino ESP32 core `3.3.10`, the ESP32-S3 Dev Module FQBN, 16 MB Flash, OPI PSRAM, USB CDC on boot, and the bundled libraries under `examples/Arduino-v3.3.2/libraries`.
 
 ### FAQ
 
