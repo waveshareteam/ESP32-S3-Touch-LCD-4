@@ -32,15 +32,15 @@ Arduino_RGB_Display *gfx = new Arduino_RGB_Display(
 #if LV_USE_LOG != 0
 void my_print(const char *buf)
 {
-    USBSerial.printf(buf);
+    USBSerial.printf("%s", buf);
     USBSerial.flush();
 }
 #endif
 
 void my_disp_flush(lv_disp_drv_t *disp, const lv_area_t *area, lv_color_t *color_p)
 {
-    uint32_t w = (area->x2 - area->x1 + 1);
-    uint32_t h = (area->y2 - area->y1 + 1);
+    uint32_t w = area->x2 - area->x1 + 1;
+    uint32_t h = area->y2 - area->y1 + 1;
 
 #if (LV_COLOR_16_SWAP != 0)
     gfx->draw16bitBeRGBBitmap(area->x1, area->y1, (uint16_t *)&color_p->full, w, h);
@@ -72,9 +72,11 @@ static void update_battery_label()
 {
     float voltage = 0.0f;
     uint16_t raw = 0;
+    char text[64];
 
     if (WS_CH32_IO::readBatteryVoltage(Wire, &voltage, &raw)) {
-        lv_label_set_text_fmt(battery_label, "Battery\n%.2f V\nADC %u", voltage, raw);
+        snprintf(text, sizeof(text), "Battery\n%.2f V\nADC %u", voltage, raw);
+        lv_label_set_text(battery_label, text);
         USBSerial.printf("Battery: %.3f V, raw ADC: %u\r\n", voltage, raw);
     } else {
         lv_label_set_text(battery_label, "Battery\nread failed");
@@ -120,6 +122,7 @@ void setup()
 
     create_battery_ui();
     update_battery_label();
+    last_battery_ms = millis();
 }
 
 void loop()
