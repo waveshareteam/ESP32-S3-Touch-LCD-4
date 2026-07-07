@@ -1,49 +1,109 @@
-# Waveshare ESP32-S3-Touch-LCD-4 Product Engineering Sample Program
+# Waveshare ESP32-S3-Touch-LCD-4 / ESP32-S3-LCD-4
 
-ESP32-S3-LCD-4 is a microcontroller development board with 2.4GHz WiFi and BLE 5 support, integrates 16MB Flash and 8MB PSRAM. Onboard 4inch 480 × 480 LCD screen can smoothly run GUI programs such as LVGL. Combined with various peripheral interfaces to quickly develop the HMI of ESP32-S3, suitable for scenarios such as smart control panel, home gateway, intelligent interactive panel, industrial control, and smart lighting control.
+[中文](README_CN.md)
 
----
+This repository supports the Waveshare ESP32-S3-Touch-LCD-4 and ESP32-S3-LCD-4 4-inch round ESP32-S3 boards. The two boards share the 480 x 480 LCD, 16 MB Flash, 8 MB PSRAM, RS485, TWAI/CAN, RTC, SD card, battery-voltage sensing, and CH32V003 helper controller; the Touch variant adds a GT911 capacitive touch panel.
 
-## 🔧 Configuration
+This repository provides factory firmware, schematic files, Arduino examples, and ESP-IDF examples. The examples are organized from basic peripheral bring-up to graphical UI applications, and both ESP-IDF and Arduino sketches are checked by GitHub Actions when related files change.
 
-You can find detailed configuration information on the product wiki page
+### Supported Board Variants
 
----
+| Board | Touch controller | Notes |
+| --- | --- | --- |
+| ESP32-S3-Touch-LCD-4 | GT911 capacitive touch | Use all display, touch, LVGL, and ESP-Brookesia examples. |
+| ESP32-S3-LCD-4 | No GT911 touch panel | Display, CH32, battery, SD, RS485, TWAI/CAN, RTC, and non-touch UI paths are shared. Touch-specific examples compile in CI, but firmware that requires GT911 input should be used in display-only mode or adapted before flashing. |
 
-## 🛠️ Contributing
+### Key Features
 
-We welcome contributions! Here’s how you can help:
+| Item | Description |
+| --- | --- |
+| MCU | ESP32-S3 with 2.4 GHz Wi-Fi and Bluetooth LE 5 |
+| Memory | 16 MB Flash and 8 MB PSRAM |
+| Display | 4-inch 480 x 480 LCD with LVGL and ESP-Brookesia examples |
+| Touch | GT911 capacitive touch on ESP32-S3-Touch-LCD-4; not populated on ESP32-S3-LCD-4 |
+| IO expander | CH32V003 over I2C for backlight, LCD/touch reset, buzzer, power enable, and battery ADC |
+| Peripherals | RS485, TWAI/CAN, RTC, SD card, battery-voltage monitor |
+| Main frameworks | ESP-IDF and Arduino ESP32 |
 
-1. Fork the repository.
-2. Create a new branch for your feature or bug fix.
-3. Commit your changes with clear descriptions.
-4. Submit a pull request for review.
+### Repository Layout
 
----
+| Path | Content |
+| --- | --- |
+| [examples/esp-idf](examples/esp-idf/) | ESP-IDF examples from peripheral tests to LVGL/ESP-Brookesia UI |
+| [examples/arduino](examples/arduino/) | Arduino sketches and bundled libraries |
+| [config](config/) | Shared configuration notes and future reusable overlays |
+| [examples/esp-idf/ioexpander](examples/esp-idf/ioexpander/) | Standalone CH32V003 IO expander test and detailed customer guide |
+| [docs/CI.md](docs/CI.md) | ESP-IDF and Arduino example CI rules |
+| [Schematic](Schematic/) | V4.0 schematic PDF |
+| [Firmware](Firmware/) | Factory firmware image and flashing/recovery notes |
+| [docs/firmware.md](docs/firmware.md) | Firmware artifact policy and CI boundary |
+| [releases](releases/) | Firmware packaging and artifact download helpers |
 
-## 🧩 Issues and Support
+### ESP-IDF Quick Start
 
-If you encounter any issues:
+Install ESP-IDF v5.5.4 or v6.0.x, then start with a small board-level example:
 
-- Check the [Issues](https://github.com/waveshareteam/ESP32-S3-Touch-LCD-4/issues) section.
-- Create a new issue with detailed information.
-- Refer to the documentation for troubleshooting tips.
-- Contact the Waveshare team and provide the order number to obtain technical support.
+```bash
+cd examples/esp-idf/ioexpander
+idf.py set-target esp32s3
+idf.py build
+idf.py -p PORT flash monitor
+```
 
----
+Replace `PORT` with the actual serial port, such as `COM8` on Windows or `/dev/ttyACM0` on Linux.
 
-## 📜 License
+Recommended learning order:
 
-This repository is licensed under the Apache License License. See the `LICENSE` file for details.
+1. [ioexpander](examples/esp-idf/ioexpander/): verify CH32, backlight, reset pins, buzzer, and battery ADC first.
+2. [01_RS485_Test](examples/esp-idf/01_RS485_Test/) to [05_TWAItransmit](examples/esp-idf/05_TWAItransmit/): validate onboard peripherals one by one.
+3. [06_lvgl_demo_v8](examples/esp-idf/06_lvgl_demo_v8/) or [07_lvgl_demo_v9](examples/esp-idf/07_lvgl_demo_v9/): validate display, touch-capable BSP startup, and LVGL. On ESP32-S3-LCD-4, treat GT911 input as unavailable unless the example explicitly supports display-only mode.
+4. [09_BatteryVoltage_LVGL](examples/esp-idf/09_BatteryVoltage_LVGL/): learn how to show battery voltage in an LVGL screen.
+5. [08_ESP32-S3-Touch-LCD-4-esp-brookesia](examples/esp-idf/08_ESP32-S3-Touch-LCD-4-esp-brookesia/): inspect a larger ESP-Brookesia UI application structure.
 
----
+### CH32V003 IO Expander
 
-## 🙌 Acknowledgments
+Some board functions are controlled by the CH32V003 helper chip instead of direct ESP32-S3 GPIOs. Common examples are LCD backlight PWM, LCD reset, touch reset, buzzer, system power enable, and battery ADC.
 
-- Waveshare for their excellent hardware platforms and software support
-- The Espressif Team for their continuous support.
-- Open-source contributors who make these projects possible.
+Key hardware parameters:
 
----
+| Item | Value |
+| --- | --- |
+| I2C SDA | `GPIO15` |
+| I2C SCL | `GPIO7` |
+| CH32 I2C address | `0x24` |
+| Backlight API | `custom_io_expander_set_pwm()`, range 0 to 255 |
+| Battery-voltage formula | `raw * 3.3 / 1023 * 3.0` |
 
-Thank you for using Waveshare Electronics Products! 🚀
+If the display, touch, or CH32 register writes occasionally fail after a quick reset, run [examples/esp-idf/ioexpander](examples/esp-idf/ioexpander/) first. It includes I2C bus recovery, CH32 initialization retry, and LCD/touch reset handling.
+
+### Examples And CI
+
+See [examples/README.md](examples/README.md) and [examples/esp-idf/README.md](examples/esp-idf/README.md) for the example map.
+
+CI uses one `Build Examples` workflow. It builds changed ESP-IDF projects for target `esp32s3` with ESP-IDF `v5.5.4` and `v6.0.2`, compiles changed Arduino sketches with Arduino ESP32 core `3.3.10`, and uploads flashable firmware artifacts generated by `releases/package_firmware.py`.
+
+### FAQ
+
+**The screen is dark or brightness does not change**
+
+Check that CH32 initialization succeeds. The backlight is controlled by CH32 PWM, not a regular ESP32 LEDC pin. Use `custom_io_expander_set_pwm()` at the low level, or `bsp_display_brightness_set()` when using the BSP.
+
+**Peripherals occasionally fail after quick reset**
+
+CH32 or other devices on the same I2C bus may not reset at the same time as ESP32-S3. At application startup, recover the I2C bus, initialize CH32, and pulse the LCD/touch reset pins low before releasing them. The `ioexpander`, SD, battery, and UI examples already include this recovery flow.
+
+**Battery voltage looks wrong**
+
+The examples use a divider ratio of `3.0` according to the schematic. If the hardware divider or ADC reference is changed, update the conversion constants in the examples.
+
+**Which libraries does Arduino CI use?**
+
+Arduino CI passes `examples/arduino/libraries` to Arduino CLI, so it uses the repository versions of `GFX Library for Arduino`, `lvgl`, `SensorLib`, `WS_CH32_IO`, and `EspSoftwareSerial` instead of downloading replacements from Library Manager.
+
+### Support
+
+If you run into problems, first check the example README files, serial logs, and [Issues](https://github.com/waveshareteam/ESP32-S3-Touch-LCD-4/issues). For technical support, contact Waveshare support and include the product version, reproduction steps, ESP-IDF/Arduino version, and serial log.
+
+### License
+
+This repository is licensed under Apache License 2.0. See [LICENSE](LICENSE) for details.
