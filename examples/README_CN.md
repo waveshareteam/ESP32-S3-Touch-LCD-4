@@ -32,8 +32,8 @@ idf.py -p PORT flash monitor
 | [09_BatteryVoltage_LVGL](esp-idf/09_BatteryVoltage_LVGL/README_CN.md) | CH32 ADC 电池电压采样并显示到 LVGL | 显示/板级监控 |
 | [08_ESP32-S3-Touch-LCD-4-esp-brookesia](esp-idf/08_ESP32-S3-Touch-LCD-4-esp-brookesia/README_CN.md) | ESP-Brookesia Phone UI、计算器、画板和 CAN 任务 | 进阶 UI |
 
-ESP-IDF 和 Arduino 示例 CI 规则见 [../docs/CI_CN.md](../docs/CI_CN.md)。
+ESP-IDF 和 Arduino 示例 CI 规则见 [../docs/CI_CN.md](../docs/CI_CN.md)，固件 artifact 打包说明见 [../releases/README.md](../releases/README.md)。
 
 ### Arduino 示例
 
-Arduino sketches 和随附库位于 [Arduino-v3.3.2](Arduino-v3.3.2/)。`Arduino examples` 工作流使用 Arduino ESP32 core `3.3.8` 以及 [Arduino-v3.3.2/libraries](Arduino-v3.3.2/libraries/) 中当前仓库自带的库编译改动过的产品示例。客户本地使用时，建议与 CI 保持一致：ESP32-S3 Dev Module、16 MB Flash、OPI PSRAM、USB CDC on boot，以及 `app3M_fat9M_16MB` 分区。
+Arduino sketches 和随附库位于 [arduino](arduino/)。`Build Examples` 工作流使用 Arduino ESP32 core `3.3.10` 以及 [arduino/libraries](arduino/libraries/) 中当前仓库自带的库编译第一方产品示例。客户本地使用时，建议与 CI 保持一致：ESP32-S3 Dev Module、16 MB Flash、OPI PSRAM、USB CDC on boot，以及 `app3M_fat9M_16MB` 分区。

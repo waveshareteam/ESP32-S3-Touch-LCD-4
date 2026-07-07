@@ -32,8 +32,8 @@ The examples are ordered from board-level bring-up to graphical UI:
 | [09_BatteryVoltage_LVGL](esp-idf/09_BatteryVoltage_LVGL/) | CH32 ADC battery-voltage sampling displayed in LVGL | Display/board monitor |
 | [08_ESP32-S3-Touch-LCD-4-esp-brookesia](esp-idf/08_ESP32-S3-Touch-LCD-4-esp-brookesia/) | ESP-Brookesia Phone UI with calculator, draw panel, and CAN task | Advanced UI |
 
-See [../docs/CI.md](../docs/CI.md) for ESP-IDF and Arduino example CI rules.
+See [../docs/CI.md](../docs/CI.md) for ESP-IDF and Arduino example CI rules, and [../releases/README.md](../releases/README.md) for firmware artifact packaging.
 
 ### Arduino Examples
 
-Arduino sketches and bundled libraries are under [Arduino-v3.3.2](Arduino-v3.3.2/). The `Arduino examples` workflow compiles changed product sketches with Arduino ESP32 core `3.3.8` and the libraries already stored in [Arduino-v3.3.2/libraries](Arduino-v3.3.2/libraries/). When using Arduino examples locally, keep the board options aligned with CI: ESP32-S3 Dev Module, 16 MB Flash, OPI PSRAM, USB CDC on boot, and the `app3M_fat9M_16MB` partition scheme.
+Arduino sketches and bundled libraries are under [arduino](arduino/). The `Build Examples` workflow compiles first-party product sketches with Arduino ESP32 core `3.3.10` and the libraries already stored in [arduino/libraries](arduino/libraries/). When using Arduino examples locally, keep the board options aligned with CI: ESP32-S3 Dev Module, 16 MB Flash, OPI PSRAM, USB CDC on boot, and the `app3M_fat9M_16MB` partition scheme.

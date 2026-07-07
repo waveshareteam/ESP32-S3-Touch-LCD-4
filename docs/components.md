@@ -1,0 +1,16 @@
+# Components
+
+ESP-IDF examples prefer managed components where possible:
+
+- `waveshare/esp32_s3_touch_lcd_4` provides the board display, touch, and BSP integration used by LVGL and ESP-Brookesia examples.
+- `lvgl/lvgl` is selected per example according to the LVGL major version being demonstrated.
+- `espressif/esp-brookesia` is used by the ESP-Brookesia example.
+
+Small local components remain only where they are board-example glue:
+
+- `components/can` is used by TWAI/CAN receive, transmit, and Brookesia examples.
+- `components/apps` contains local ESP-Brookesia demo applications and assets.
+
+Arduino examples use bundled libraries from `examples/arduino/libraries` so CI and customer builds use the same known library set.
+
+When a local reusable driver becomes available as a maintained Waveshare or Espressif component, prefer migrating the example manifest to the managed component and keep local code only for board-specific glue.
