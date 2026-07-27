@@ -4,12 +4,14 @@
 
 This example verifies the onboard PCF85063A RTC. It initializes the RTC over I2C, sets a fixed time, sets an alarm two seconds later, and reads the alarm path through the CH32V003 helper controller.
 
+The RTC driver is provided by the managed `waveshare/pcf85063a` component. This example keeps only the board-specific shared-I2C and CH32V003 `EXIO7` integration.
+
 ### Hardware And Default Configuration
 
 | Item | Default | Description |
 | --- | --- | --- |
 | RTC chip | PCF85063A | I2C RTC |
-| RTC I2C address | `0x51` | Defined in `main/PCF85063A.h` |
+| RTC I2C address | `0x51` | Provided by `waveshare/pcf85063a` `2.0.0` |
 | I2C SCL | `GPIO7` | Shared board I2C bus; configurable with `idf.py menuconfig` |
 | I2C SDA | `GPIO15` | Shared board I2C bus; configurable with `idf.py menuconfig` |
 | RTC interrupt path | CH32V003 `EXIO7` | The PCF85063A `RTC_INT` signal is not connected directly to an ESP32-S3 GPIO |
@@ -47,4 +49,4 @@ I (...) RTC: The alarm clock goes off (CH32 RTC_INT register=0).
 - If I2C read/write fails, confirm that RTC SDA/SCL match menuconfig.
 - If time does not advance, check the RTC crystal, power supply, and PCF85063A initialization result.
 - If the alarm does not trigger, verify the CH32V003 at I2C address `0x24`, its `EXIO7` input, and the PCF85063A alarm flag. Do not assign `RTC_INT` to an ESP32-S3 GPIO.
-- If the alarm should run only once, follow the comment in `main/main.c` and do not call `PCF85063A_Enable_Alarm()` again after the first trigger.
+- If the alarm should run only once, follow the comment in `main/main.c` and do not call `pcf85063a_enable_alarm()` again after the first trigger.
