@@ -232,14 +232,18 @@ def package(args: argparse.Namespace) -> Path:
         write_flash_args = []
 
     command = build_esptool_prefix(chip, before, after) + write_flash_args + command_pairs
+    project_path = safe_project_path(project, repo)
+    timestamp_utc = datetime.now(timezone.utc).isoformat()
     manifest = {
         "name": artifact_name,
         "framework": args.framework,
         "framework_version": args.framework_version,
         "target": chip,
-        "project": safe_project_path(project, repo),
+        "project_path": project_path,
+        "project": project_path,
         "git_sha": args.git_sha,
-        "generated_at": datetime.now(timezone.utc).isoformat(),
+        "timestamp_utc": timestamp_utc,
+        "generated_at": timestamp_utc,
         "baud": DEFAULT_BAUD,
         "files": files,
         "flash_command": " ".join("<PORT>" if item == "$PORT" else item for item in command),

@@ -37,5 +37,5 @@ The first build downloads BSP and LVGL managed components, so it may take longer
 ### Troubleshooting
 
 - If the screen is dark, run [../ioexpander](../ioexpander/) first to verify CH32, backlight PWM, and LCD/touch reset.
-- If build fails, confirm ESP-IDF v5.5.4 or v6.0.2 is used, remove stale `managed_components/`, and retry.
+- If build fails, confirm ESP-IDF v5.5.5 or v6.0.2 is used, remove stale `managed_components/`, and retry.
 - If touch orientation is wrong, check BSP display rotation and touch configuration.

@@ -1,6 +1,6 @@
 # ESP-Brookesia Notes
 
-`examples/esp-idf/08_ESP32-S3-Touch-LCD-4-esp-brookesia` is a source-maintained rich UI example. CI builds it with ESP-IDF `v5.5.4` and `v6.0.2` through the shared `Build Examples` workflow.
+`examples/esp-idf/08_ESP32-S3-Touch-LCD-4-esp-brookesia` is a source-maintained rich UI example. The current CI matrix builds it with ESP-IDF `v5.5.5` and `v6.0.2` through the shared `Build Examples` workflow.
 
 The example depends on managed BSP, LVGL, ESP LVGL port, and ESP-Brookesia components, plus local demo applications under `components/apps`.
 

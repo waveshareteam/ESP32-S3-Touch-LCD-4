@@ -10,7 +10,7 @@ on:
     paths:
       - ".github/workflows/examples.yml"
       - "scripts/discover_examples.py"
-      - "releases/**"
+      - "releases/package_firmware.py"
       - "config/**"
       - "examples/esp-idf/**"
       - "examples/arduino/**"
@@ -18,7 +18,7 @@ on:
     paths:
       - ".github/workflows/examples.yml"
       - "scripts/discover_examples.py"
-      - "releases/**"
+      - "releases/package_firmware.py"
       - "config/**"
       - "examples/esp-idf/**"
       - "examples/arduino/**"
@@ -45,11 +45,30 @@ jobs:
           python3 scripts/discover_examples.py \
             --surface esp-idf \
             --selector "${{ github.event.inputs.target || 'all' }}" \
-            --idf-versions v5.5.4,v6.0.2 \
+            --idf-versions v5.5.5,v6.0.2 \
             --github-output "$GITHUB_OUTPUT"
 
+  validate-selection:
+    needs:
+      - discover-esp-idf
+      - discover-arduino
+    runs-on: ubuntu-latest
+    steps:
+      - name: Require at least one matching example
+        env:
+          SELECTOR: ${{ github.event.inputs.target || 'all' }}
+          ESP_IDF_COUNT: ${{ needs.discover-esp-idf.outputs.count }}
+          ARDUINO_COUNT: ${{ needs.discover-arduino.outputs.count }}
+        run: |
+          if [[ "$ESP_IDF_COUNT" == "0" && "$ARDUINO_COUNT" == "0" ]]; then
+            echo "::error title=No examples matched selector::No ESP-IDF project or Arduino sketch matched '$SELECTOR'."
+            exit 1
+          fi
+
   build-esp-idf:
-    needs: discover-esp-idf
+    needs:
+      - discover-esp-idf
+      - validate-selection
     if: needs.discover-esp-idf.outputs.count != '0'
     runs-on: ubuntu-latest
     container: espressif/idf:${{ matrix.idf }}
@@ -95,12 +114,14 @@ jobs:
           python3 scripts/discover_examples.py \
             --surface arduino \
             --selector "${{ github.event.inputs.target || 'all' }}" \
-            --arduino-core 3.3.10 \
+            --arduino-core 3.3.11 \
             --fqbn esp32:esp32:esp32s3:USBMode=hwcdc,CDCOnBoot=cdc,FlashSize=16M,PSRAM=opi,PartitionScheme=app3M_fat9M_16MB \
             --github-output "$GITHUB_OUTPUT"
 
   build-arduino:
-    needs: discover-arduino
+    needs:
+      - discover-arduino
+      - validate-selection
     if: needs.discover-arduino.outputs.count != '0'
     runs-on: ubuntu-latest
     strategy:

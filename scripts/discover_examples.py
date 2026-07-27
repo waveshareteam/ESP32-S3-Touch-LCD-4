@@ -8,6 +8,23 @@ import json
 from pathlib import Path
 
 
+DEFAULT_IDF_VERSIONS = "v5.5.5,v6.0.2"
+DEFAULT_ARDUINO_CORE = "3.3.11"
+
+COMMON_GLOBAL_SELECTORS = frozenset(
+    {
+        ".github/workflows/examples.yml",
+        "releases/package_firmware.py",
+        "scripts/discover_examples.py",
+    }
+)
+
+SURFACE_GLOBAL_PREFIXES = {
+    "esp-idf": ("config/",),
+    "arduino": ("examples/arduino/libraries/",),
+}
+
+
 def normalize(value: str) -> str:
     return value.replace("\\", "/").strip("/")
 
@@ -22,8 +39,21 @@ def selector_matches(entry: dict[str, str], selector: str) -> bool:
         selector == name
         or selector == path
         or path.startswith(selector + "/")
+        or selector.startswith(path + "/")
         or selector in path.split("/")
     )
+
+
+def selector_selects_all(selector: str, surface: str) -> bool:
+    selector = normalize(selector)
+    if not selector or selector == "all" or selector in COMMON_GLOBAL_SELECTORS:
+        return True
+
+    for prefix in SURFACE_GLOBAL_PREFIXES.get(surface, ()):
+        root = prefix.rstrip("/")
+        if selector == root or selector.startswith(prefix):
+            return True
+    return False
 
 
 def discover_esp_idf(repo: Path) -> list[dict[str, str]]:
@@ -59,11 +89,15 @@ def build_matrix(args: argparse.Namespace) -> dict[str, list[dict[str, str]]]:
     repo = Path(args.repo).resolve()
     selector = normalize(args.selector)
     if args.surface == "esp-idf":
-        projects = [entry for entry in discover_esp_idf(repo) if selector_matches(entry, selector)]
+        projects = discover_esp_idf(repo)
+        if not selector_selects_all(selector, args.surface):
+            projects = [entry for entry in projects if selector_matches(entry, selector)]
         versions = [item.strip() for item in args.idf_versions.split(",") if item.strip()]
         include = [entry | {"idf": version} for entry in projects for version in versions]
     else:
-        sketches = [entry for entry in discover_arduino(repo) if selector_matches(entry, selector)]
+        sketches = discover_arduino(repo)
+        if not selector_selects_all(selector, args.surface):
+            sketches = [entry for entry in sketches if selector_matches(entry, selector)]
         include = [entry | {"core": args.arduino_core, "fqbn": args.fqbn} for entry in sketches]
     return {"include": include}
 
@@ -73,8 +107,8 @@ def main() -> None:
     parser.add_argument("--repo", default=".")
     parser.add_argument("--surface", choices=("esp-idf", "arduino"), required=True)
     parser.add_argument("--selector", default="all")
-    parser.add_argument("--idf-versions", default="v5.5.4,v6.0.2")
-    parser.add_argument("--arduino-core", default="3.3.10")
+    parser.add_argument("--idf-versions", default=DEFAULT_IDF_VERSIONS)
+    parser.add_argument("--arduino-core", default=DEFAULT_ARDUINO_CORE)
     parser.add_argument("--fqbn", default="esp32:esp32:esp32s3")
     parser.add_argument("--github-output")
     args = parser.parse_args()

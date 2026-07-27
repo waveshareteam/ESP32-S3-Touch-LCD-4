@@ -2,7 +2,7 @@
 
 [中文](README_CN.md)
 
-These examples target `esp32s3` for ESP32-S3-Touch-LCD-4 and ESP32-S3-LCD-4, and are built in CI with ESP-IDF `v5.5.4` and `v6.0.2`. Each buildable example directory has its own `CMakeLists.txt` and `main/` directory.
+These examples target `esp32s3` for ESP32-S3-Touch-LCD-4 and ESP32-S3-LCD-4. The current CI matrix builds them with ESP-IDF `v5.5.5` and `v6.0.2`. Each buildable example directory has its own `CMakeLists.txt` and `main/` directory.
 
 ### Recommended Learning Path
 

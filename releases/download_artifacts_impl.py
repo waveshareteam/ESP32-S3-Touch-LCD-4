@@ -35,6 +35,10 @@ def slugify(value: str) -> str:
     return value or "artifact"
 
 
+def relative_output_path(path: Path, output_root: Path) -> str:
+    return path.relative_to(output_root).as_posix()
+
+
 def run_text(command: list[str]) -> str | None:
     try:
         result = subprocess.run(command, check=True, capture_output=True, text=True)
@@ -71,9 +75,8 @@ def github_error_message(exc: urllib.error.HTTPError) -> str | None:
 
 def github_auth_help() -> str:
     return (
-        "Run `gh auth status` and "
-        "`gh api 'repos/OWNER/REPO/actions/runs?per_page=1'`, "
-        "or persist GH_TOKEN/GITHUB_TOKEN in your shell startup file."
+        "Run `gh auth login`, or set GH_TOKEN/GITHUB_TOKEN for the current command or session. "
+        "Use `gh auth status` to verify GitHub CLI authentication."
     )
 
 
@@ -418,7 +421,7 @@ def main() -> int:
                 print(f"Marked {len(executable_scripts)} shell scripts executable.")
             summary["artifacts"].append({
                 "name": name,
-                "path": artifact_dir.as_posix(),
+                "path": relative_output_path(artifact_dir, output_root),
                 "files": extracted,
                 "executable_scripts": executable_scripts,
             })

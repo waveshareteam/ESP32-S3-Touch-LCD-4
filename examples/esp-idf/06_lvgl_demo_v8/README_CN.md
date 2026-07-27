@@ -37,5 +37,5 @@ idf.py -p PORT flash monitor
 ### 常见问题
 
 - 如果屏幕不亮，先运行 [../ioexpander](../ioexpander/README_CN.md) 确认 CH32、背光 PWM 和 LCD/触摸复位正常。
-- 如果构建失败，确认使用 ESP-IDF v5.5.4 或 v6.0.2，并清理旧的 `managed_components/` 后重试。
+- 如果构建失败，确认使用 ESP-IDF v5.5.5 或 v6.0.2，并清理旧的 `managed_components/` 后重试。
 - 如果触摸方向不正确，检查 BSP 显示旋转和触摸配置。

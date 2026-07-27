@@ -74,7 +74,7 @@ LCD 正常工作时，建议保持 `SYS_EN`、`LCD_RST`、`TP_RST` 为高电平�
 
 ### 编译和运行
 
-支持 ESP-IDF v5.5.4 和 v6.0.2。
+当前 CI 矩阵使用 ESP-IDF v5.5.5 和 v6.0.2 构建本示例。
 
 ```bash
 cd examples/esp-idf/ioexpander
