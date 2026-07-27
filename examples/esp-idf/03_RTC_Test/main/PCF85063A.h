@@ -11,9 +11,7 @@
 #include <stdio.h>
 #include "esp_rom_sys.h"
 #include "esp_log.h"
-#include "argtable3/argtable3.h"
 #include "driver/i2c_master.h"
-#include "esp_console.h"
 #include "freertos/task.h"
 
 #include <stdint.h>
