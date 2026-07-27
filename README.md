@@ -54,9 +54,11 @@ touch panel.
 | Hardware files | [V4.0 hardware reference](hardware/HARDWARE_REFERENCE.md) and [schematic](hardware/schematics/) |
 
 > [!IMPORTANT]
-> Use the bundled V4.0 schematic and the physical board revision as the source
-> of truth for electrical work. Some online material describes earlier board
-> revisions with a different IO expander or pin routing.
+> The bundled schematic covers ESP32-S3-Touch-LCD-4 V4.0. Use it together
+> with the physical board revision as the source of truth for electrical work.
+> Confirm the product documentation before relying on revision-specific details
+> for ESP32-S3-LCD-4. Some online material describes earlier revisions with a
+> different IO expander or pin routing.
 
 ## Firmware Artifacts
 
@@ -129,8 +131,8 @@ arduino-cli compile \
 | [03_RTC_Test](examples/esp-idf/03_RTC_Test/) | PCF85063A time/date access and alarm interrupt | Both |
 | [04_TWAIreceive](examples/esp-idf/04_TWAIreceive/) | TWAI/CAN receive and frame echo | Both |
 | [05_TWAItransmit](examples/esp-idf/05_TWAItransmit/) | TWAI/CAN periodic frame transmission | Both |
-| [06_lvgl_demo_v8](examples/esp-idf/06_lvgl_demo_v8/) | BSP display startup and LVGL v8 widgets | Both; touch optional |
-| [07_lvgl_demo_v9](examples/esp-idf/07_lvgl_demo_v9/) | BSP display startup and LVGL v9 benchmark | Both; touch optional |
+| [06_lvgl_demo_v8](examples/esp-idf/06_lvgl_demo_v8/) | BSP display startup and LVGL v8 widgets | Touch direct; adapt LCD-only BSP startup |
+| [07_lvgl_demo_v9](examples/esp-idf/07_lvgl_demo_v9/) | BSP display startup and LVGL v9 benchmark | Touch direct; adapt LCD-only BSP startup |
 | [08_ESP32-S3-Touch-LCD-4-esp-brookesia](examples/esp-idf/08_ESP32-S3-Touch-LCD-4-esp-brookesia/) | ESP-Brookesia Phone UI, calculator, drawing, and CAN task | Touch recommended |
 | [09_BatteryVoltage_LVGL](examples/esp-idf/09_BatteryVoltage_LVGL/) | Battery-voltage sampling displayed with LVGL | Both |
 
@@ -197,7 +199,7 @@ permanent compatibility promise. The workflow files remain the source of truth.
 | [`firmware/`](firmware/) | Factory flashing and recovery binary |
 | [`releases/`](releases/) | Firmware packaging and artifact download tools |
 | [`hardware/`](hardware/) | V4.0 hardware reference and schematic |
-| [`config/`](config/) | Shared ESP-IDF configuration notes; reserved for reusable overlays |
+| [`config/`](config/) | Reserved for reusable shared ESP-IDF overlays; none are active yet |
 | [`docs/`](docs/) | Repository, CI, component, firmware, and compatibility notes |
 
 ## Documentation

@@ -53,8 +53,9 @@ Touch 版本另外配备 GT911 电容触摸屏。
 | 硬件文件 | [V4.0 硬件参考](hardware/HARDWARE_REFERENCE_CN.md)和[原理图](hardware/schematics/) |
 
 > [!IMPORTANT]
-> 涉及电气连接时，请以仓库内 V4.0 原理图和实际板卡版本为准。部分在线资料描述的是
-> 使用不同 IO 扩展器或引脚连接的早期硬件版本。
+> 仓库内原理图覆盖 ESP32-S3-Touch-LCD-4 V4.0。涉及电气连接时，请同时以原理图和
+> 实际板卡版本为准。ESP32-S3-LCD-4 的特定硬件版本信息还应核对产品文档。部分在线
+> 资料描述的是使用不同 IO 扩展器或引脚连接的早期硬件版本。
 
 ## 固件产物
 
@@ -125,8 +126,8 @@ arduino-cli compile \
 | [03_RTC_Test](examples/esp-idf/03_RTC_Test/README_CN.md) | PCF85063A 时间/日期读写和闹钟中断 | 两款 |
 | [04_TWAIreceive](examples/esp-idf/04_TWAIreceive/README_CN.md) | TWAI/CAN 接收和帧回传 | 两款 |
 | [05_TWAItransmit](examples/esp-idf/05_TWAItransmit/) | TWAI/CAN 周期发送测试帧 | 两款 |
-| [06_lvgl_demo_v8](examples/esp-idf/06_lvgl_demo_v8/README_CN.md) | BSP 显示初始化和 LVGL v8 widgets | 两款；触摸可选 |
-| [07_lvgl_demo_v9](examples/esp-idf/07_lvgl_demo_v9/README_CN.md) | BSP 显示初始化和 LVGL v9 benchmark | 两款；触摸可选 |
+| [06_lvgl_demo_v8](examples/esp-idf/06_lvgl_demo_v8/README_CN.md) | BSP 显示初始化和 LVGL v8 widgets | Touch 版直接使用；LCD-only 需适配 BSP 启动 |
+| [07_lvgl_demo_v9](examples/esp-idf/07_lvgl_demo_v9/README_CN.md) | BSP 显示初始化和 LVGL v9 benchmark | Touch 版直接使用；LCD-only 需适配 BSP 启动 |
 | [08_ESP32-S3-Touch-LCD-4-esp-brookesia](examples/esp-idf/08_ESP32-S3-Touch-LCD-4-esp-brookesia/README_CN.md) | ESP-Brookesia Phone UI、计算器、画板和 CAN 任务 | 推荐触摸版 |
 | [09_BatteryVoltage_LVGL](examples/esp-idf/09_BatteryVoltage_LVGL/README_CN.md) | 使用 LVGL 显示电池电压采样 | 两款 |
 
@@ -188,7 +189,7 @@ arduino-cli compile \
 | [`firmware/`](firmware/) | 出厂烧录和恢复固件 |
 | [`releases/`](releases/) | 固件打包和 artifact 下载工具 |
 | [`hardware/`](hardware/) | V4.0 硬件参考和原理图 |
-| [`config/`](config/) | 共享 ESP-IDF 配置说明；预留给可复用 overlay |
+| [`config/`](config/) | 预留给可复用 ESP-IDF 共享 overlay；当前尚未启用 |
 | [`docs/`](docs/) | 仓库、CI、组件、固件和兼容性说明 |
 
 ## 文档
