@@ -74,7 +74,7 @@ Even without a display image, the backlight brightness should visibly change dur
 
 ### Build And Run
 
-ESP-IDF v5.5.4 and v6.0.2 are supported.
+The current CI matrix builds this example with ESP-IDF v5.5.5 and v6.0.2.
 
 ```bash
 cd examples/esp-idf/ioexpander

@@ -21,8 +21,8 @@
 #include "driver/twai.h"   // TWAI (CAN) driver
 
 // Define the GPIO pins used for CAN communication
-#define TX_GPIO_NUM GPIO_NUM_48 // Transmit GPIO number for CAN
-#define RX_GPIO_NUM GPIO_NUM_47 // Receive GPIO number for CAN
+#define TX_GPIO_NUM GPIO_NUM_6 // Transmit GPIO number for CAN
+#define RX_GPIO_NUM GPIO_NUM_0 // Receive GPIO number for CAN
 #define CAN_TAG "TWAI Master" // Log tag for the CAN example (for logging)
 
 // Define transmission and polling intervals in milliseconds

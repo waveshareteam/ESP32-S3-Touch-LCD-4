@@ -1,0 +1,34 @@
+name: Test Repository Tools
+
+on:
+  push:
+    branches:
+      - main
+      - master
+    paths:
+      - ".github/workflows/examples.yml"
+      - ".github/workflows/repository-tools.yml"
+      - "scripts/**"
+      - "releases/*.py"
+      - "tests/**"
+  pull_request:
+    paths:
+      - ".github/workflows/examples.yml"
+      - ".github/workflows/repository-tools.yml"
+      - "scripts/**"
+      - "releases/*.py"
+      - "tests/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  unit-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Show Python version
+        run: python3 --version
+      - name: Run repository tool tests
+        run: python3 -m unittest discover -s tests -p "test_*.py" -v

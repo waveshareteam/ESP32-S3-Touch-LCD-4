@@ -1,4 +1,5 @@
-## IDF Component Manager Manifest File
 dependencies:
+  idf:
+    version: ">=5.3"
   waveshare/custom_io_expander_ch32v003:
     version: "2.0.0"

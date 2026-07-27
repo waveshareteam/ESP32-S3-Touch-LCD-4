@@ -12,9 +12,8 @@
 #include "esp_rom_sys.h"
 #include "esp_log.h"
 #include "argtable3/argtable3.h"
-#include "driver/i2c.h"
+#include "driver/i2c_master.h"
 #include "esp_console.h"
-#include "driver/gpio.h"
 #include "freertos/task.h"
 
 #include <stdint.h>
@@ -112,7 +111,7 @@ typedef struct {
     UBYTE sec;
 }datetime_t;
 
-void DEV_GPIO_INT(int32_t Pin, gpio_isr_t isr_handler);
+i2c_master_bus_handle_t PCF85063A_Get_I2C_Bus(void);
 
 void PCF85063A_Init(void);
 void PCF85063A_Reset(void);

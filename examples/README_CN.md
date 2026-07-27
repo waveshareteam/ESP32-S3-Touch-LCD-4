@@ -36,4 +36,4 @@ ESP-IDF 和 Arduino 示例 CI 规则见 [../docs/CI_CN.md](../docs/CI_CN.md)，�
 
 ### Arduino 示例
 
-Arduino sketches 和随附库位于 [arduino](arduino/)。`03_Drawing_points` 和 `09_LVGL_Widgets` 会在运行时探测 GT911；烧录到 ESP32-S3-LCD-4 时会跳过触摸输入并继续运行。`Build Examples` 工作流使用 Arduino ESP32 core `3.3.10` 以及 [arduino/libraries](arduino/libraries/) 中当前仓库自带的库编译第一方产品示例。客户本地使用时，建议与 CI 保持一致：ESP32-S3 Dev Module、16 MB Flash、OPI PSRAM、USB CDC on boot，以及 `app3M_fat9M_16MB` 分区。
+Arduino sketches 和随附库位于 [arduino](arduino/)。`03_Drawing_points` 和 `09_LVGL_Widgets` 会在运行时探测 GT911；烧录到 ESP32-S3-LCD-4 时会跳过触摸输入并继续运行。当前 `Build Examples` 工作流使用 Arduino ESP32 core `3.3.11` 以及 [arduino/libraries](arduino/libraries/) 中当前仓库自带的库编译第一方产品示例。客户本地使用时，建议与 CI 保持一致：ESP32-S3 Dev Module、16 MB Flash、OPI PSRAM、USB CDC on boot，以及 `app3M_fat9M_16MB` 分区。

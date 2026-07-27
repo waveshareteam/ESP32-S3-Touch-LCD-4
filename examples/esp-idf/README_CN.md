@@ -2,7 +2,7 @@
 
 [English](README.md)
 
-这些示例面向 ESP32-S3-Touch-LCD-4 和 ESP32-S3-LCD-4 的 `esp32s3` 目标芯片，并在 CI 中使用 ESP-IDF `v5.5.4` 和 `v6.0.2` 构建。每个可构建示例目录都包含自己的 `CMakeLists.txt` 和 `main/` 目录。
+这些示例面向 ESP32-S3-Touch-LCD-4 和 ESP32-S3-LCD-4 的 `esp32s3` 目标芯片。当前 CI 矩阵使用 ESP-IDF `v5.5.5` 和 `v6.0.2` 构建这些示例。每个可构建示例目录都包含自己的 `CMakeLists.txt` 和 `main/` 目录。
 
 ### 推荐学习路径
 

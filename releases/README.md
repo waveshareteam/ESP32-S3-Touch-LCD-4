@@ -2,6 +2,8 @@
 
 This directory contains helper scripts for packaging build outputs into flashable firmware archives.
 
+Command examples below match the workflow versions current at the time of this update. The workflow file remains the source of truth when framework pins change.
+
 ## Board Variant Note
 
 The generated artifacts target the shared ESP32-S3-Touch-LCD-4 / ESP32-S3-LCD-4 hardware family, but ESP32-S3-LCD-4 does not populate the GT911 touch controller. Display and peripheral firmware can usually be flashed to either board. Touch-driven LVGL or ESP-Brookesia firmware should be used on ESP32-S3-Touch-LCD-4, or adapted to run without pointer input before flashing to ESP32-S3-LCD-4.
@@ -31,18 +33,20 @@ arduino-cli compile \
   --fqbn esp32:esp32:esp32s3:USBMode=hwcdc,CDCOnBoot=cdc,FlashSize=16M,PSRAM=opi,PartitionScheme=app3M_fat9M_16MB \
   --libraries examples/arduino/libraries \
   --export-binaries \
-  --output-dir build/01_HelloWorld-3.3.10 \
+  --output-dir build/01_HelloWorld-3.3.11 \
   examples/arduino/01_HelloWorld
 
 python3 releases/package_firmware.py \
   --framework arduino \
   --project examples/arduino/01_HelloWorld \
-  --build-dir build/01_HelloWorld-3.3.10 \
-  --framework-version 3.3.10 \
+  --build-dir build/01_HelloWorld-3.3.11 \
+  --framework-version 3.3.11 \
   --target esp32s3
 ```
 
 Each archive includes `manifest.json`, `flash.sh`, `flash.bat`, `flash_args.txt`, and the firmware binaries under `bin/`.
+
+`manifest.json` records `project_path` and `timestamp_utc` together with the framework version, Git commit, target, flash command, and file offsets. Compatibility aliases `project` and `generated_at` are retained.
 
 ## Download CI Artifacts
 
@@ -58,6 +62,8 @@ If `--run-id` is omitted, the script finds the latest successful `examples.yml` 
 python3 releases/download_artifacts.py --clean
 ```
 
-The extracted firmware is written to `releases/downloads/run-<run-id>/`. Each artifact gets its own folder, for example `firmware-esp-idf-06_lvgl_demo_v8-v6.0.2/`, with `flash.sh`, `flash.bat`, `manifest.json`, and `bin/` ready for flashing.
+The extracted firmware is written to `releases/downloads/run-<run-id>/`. Each artifact gets its own folder, for example `firmware-esp-idf-06_lvgl_demo_v8-v6.0.2/`, with `flash.sh`, `flash.bat`, `manifest.json`, and `bin/` ready for flashing. The sibling `artifacts.json` summary stores each artifact path relative to that run directory so it remains portable.
 
-Use `--artifact <name>` to download one firmware package, or `--pattern "firmware-esp-idf-*v6.0.2"` to filter by glob pattern. The script uses `GH_TOKEN`, `GITHUB_TOKEN`, or `gh auth token` for GitHub artifact access. When GitHub CLI is installed, artifact downloads use `gh run download` so `gh auth login` can be reused directly.
+Use `--artifact <name>` to download one firmware package, or `--pattern "firmware-esp-idf-*v6.0.2"` to filter by glob pattern.
+
+For interactive use, authenticate with `gh auth login`; the downloader reuses that session. For automation, set `GH_TOKEN` or `GITHUB_TOKEN` only for the current command or session. Do not place repository tokens in shell startup files.

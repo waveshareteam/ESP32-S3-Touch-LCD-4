@@ -34,14 +34,14 @@
 | [config](config/) | 共享配置说明和后续可复用配置片段 |
 | [examples/esp-idf/ioexpander](examples/esp-idf/ioexpander/README_CN.md) | CH32V003 IO 扩展独立测试程序和详细客户使用说明 |
 | [docs/CI_CN.md](docs/CI_CN.md) | ESP-IDF 和 Arduino 示例 CI 规则 |
-| [Schematic](Schematic/) | V4.0 原理图 PDF |
-| [Firmware](Firmware/) | 工厂固件文件和烧录/恢复说明 |
+| [hardware](hardware/HARDWARE_REFERENCE_CN.md) | V4.0 硬件参考；原理图 PDF 位于 `hardware/schematics/` |
+| [firmware](firmware/) | 工厂/恢复固件和烧录说明 |
 | [docs/firmware_CN.md](docs/firmware_CN.md) | 固件产物策略和 CI 边界 |
 | [releases](releases/) | 固件打包和 artifact 下载工具 |
 
 ### 快速开始 ESP-IDF
 
-建议先确认已安装 ESP-IDF v5.5.4 或 v6.0.x，然后从简单示例开始：
+如需复现当前 CI 矩阵，请安装 ESP-IDF v5.5.5 或 v6.0.2，然后从简单示例开始：
 
 ```bash
 cd examples/esp-idf/ioexpander
@@ -80,7 +80,7 @@ idf.py -p PORT flash monitor
 
 ESP-IDF 示例目录说明见 [examples/README_CN.md](examples/README_CN.md) 和 [examples/esp-idf/README_CN.md](examples/esp-idf/README_CN.md)。
 
-CI 使用一个 `Build Examples` 工作流。它使用 ESP-IDF `v5.5.4` 和 `v6.0.2` 构建改动过的 ESP-IDF 工程，目标为 `esp32s3`；使用 Arduino ESP32 core `3.3.10` 编译改动过的 Arduino sketches；并上传由 `releases/package_firmware.py` 生成的可烧录 firmware artifacts。
+CI 使用一个 `Build Examples` 工作流。只要源码、共享配置、发现脚本、工作流或发布打包等 CI 相关路径发生变化，工作流就会运行完整的第一方矩阵：ESP-IDF `v5.5.5` 和 `v6.0.2`（目标 `esp32s3`），以及 Arduino ESP32 core `3.3.11`。成功任务会上传由 `releases/package_firmware.py` 生成的可烧录 firmware artifacts。这些版本表示当前工作流配置，不是永久兼容承诺。
 
 ### 常见问题
 
@@ -106,4 +106,4 @@ Arduino CI 会把 `examples/arduino/libraries` 传给 Arduino CLI，因此使用
 
 ### 许可证
 
-本仓库使用 Apache License 2.0。详情见 [LICENSE](LICENSE)。
+本仓库使用 Apache License 2.0。详情见 [LICENSE.txt](LICENSE.txt)。

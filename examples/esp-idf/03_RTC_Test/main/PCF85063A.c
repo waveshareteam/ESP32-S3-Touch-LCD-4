@@ -14,6 +14,9 @@
 static uint8_t decToBcd(int val);
 static int bcdToDec(uint8_t val);
 
+static i2c_master_bus_handle_t s_i2c_bus;
+static i2c_master_dev_handle_t s_rtc_device;
+
 const unsigned char MonthStr[12][4] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov","Dec"};
 
 /**
@@ -21,67 +24,74 @@ const unsigned char MonthStr[12][4] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun",
  **/
 esp_err_t i2c_master_init(void)
 {
-    int i2c_master_port = I2C_MASTER_NUM;
+    if (s_rtc_device != NULL) {
+        return ESP_OK;
+    }
 
-    i2c_config_t conf = {
-        .mode = I2C_MODE_MASTER,
+    const i2c_master_bus_config_t bus_config = {
+        .i2c_port = I2C_MASTER_NUM,
         .sda_io_num = I2C_MASTER_SDA_IO,
         .scl_io_num = I2C_MASTER_SCL_IO,
-        .sda_pullup_en = GPIO_PULLUP_ENABLE,
-        .scl_pullup_en = GPIO_PULLUP_ENABLE,
-        .master.clk_speed = I2C_MASTER_FREQ_HZ,
+        .clk_source = I2C_CLK_SRC_DEFAULT,
+        .glitch_ignore_cnt = 7,
+        .flags.enable_internal_pullup = 1,
     };
+    esp_err_t ret = i2c_new_master_bus(&bus_config, &s_i2c_bus);
+    if (ret != ESP_OK) {
+        return ret;
+    }
 
-    i2c_param_config(i2c_master_port, &conf);
+    const i2c_device_config_t device_config = {
+        .dev_addr_length = I2C_ADDR_BIT_LEN_7,
+        .device_address = PCF85063A_ADDRESS,
+        .scl_speed_hz = I2C_MASTER_FREQ_HZ,
+    };
+    ret = i2c_master_bus_add_device(s_i2c_bus, &device_config, &s_rtc_device);
+    if (ret != ESP_OK) {
+        i2c_del_master_bus(s_i2c_bus);
+        s_i2c_bus = NULL;
+    }
+    return ret;
+}
 
-    return i2c_driver_install(i2c_master_port, conf.mode, I2C_MASTER_RX_BUF_DISABLE, I2C_MASTER_TX_BUF_DISABLE, 0);
+i2c_master_bus_handle_t PCF85063A_Get_I2C_Bus(void)
+{
+    return s_i2c_bus;
 }
 
 esp_err_t  DEV_I2C_Write_Byte(uint8_t addr, uint8_t reg, uint8_t Value)
 {
+    if (addr != PCF85063A_ADDRESS || s_rtc_device == NULL) {
+        return ESP_ERR_INVALID_STATE;
+    }
     uint8_t write_buf[2] = {reg, Value};
-    return i2c_master_write_to_device(I2C_MASTER_NUM, addr, write_buf, 2, I2C_MASTER_TIMEOUT_MS / portTICK_PERIOD_MS);
+    return i2c_master_transmit(s_rtc_device, write_buf, sizeof(write_buf), I2C_MASTER_TIMEOUT_MS);
 }
 
 esp_err_t  DEV_I2C_Write_nByte(uint8_t addr, uint8_t *pData, uint32_t Len)
 {
-    return i2c_master_write_to_device(I2C_MASTER_NUM, addr, pData, Len, I2C_MASTER_TIMEOUT_MS / portTICK_PERIOD_MS);
+    if (addr != PCF85063A_ADDRESS || s_rtc_device == NULL) {
+        return ESP_ERR_INVALID_STATE;
+    }
+    return i2c_master_transmit(s_rtc_device, pData, Len, I2C_MASTER_TIMEOUT_MS);
 }
 
 esp_err_t DEV_I2C_Read_Byte(uint8_t addr, uint8_t reg, uint8_t *data)
 {
-    return i2c_master_write_read_device(I2C_MASTER_NUM, addr, &reg, 1, data, 1, I2C_MASTER_TIMEOUT_MS / portTICK_PERIOD_MS);
+    if (addr != PCF85063A_ADDRESS || s_rtc_device == NULL) {
+        return ESP_ERR_INVALID_STATE;
+    }
+    return i2c_master_transmit_receive(s_rtc_device, &reg, 1, data, 1, I2C_MASTER_TIMEOUT_MS);
 }
 
 esp_err_t DEV_I2C_Read_nByte(uint8_t addr, uint8_t reg, uint8_t *pData, uint32_t Len)
 {
-   return i2c_master_write_read_device(I2C_MASTER_NUM, addr, &reg, 1, pData, Len, I2C_MASTER_TIMEOUT_MS / portTICK_PERIOD_MS);
+    if (addr != PCF85063A_ADDRESS || s_rtc_device == NULL) {
+        return ESP_ERR_INVALID_STATE;
+    }
+    return i2c_master_transmit_receive(s_rtc_device, &reg, 1, pData, Len, I2C_MASTER_TIMEOUT_MS);
 }
 
-void DEV_GPIO_INT(int32_t Pin, gpio_isr_t isr_handler)
-{
-    //zero-initialize the config structure.
-    gpio_config_t io_conf = {};
-    //disable interrupt
-    io_conf.intr_type = GPIO_INTR_NEGEDGE;
-    //set as input mode
-    io_conf.mode = GPIO_MODE_INPUT;
-    //disable pull-down mode
-    io_conf.pull_down_en =0 ;
-    //disable pull-up mode
-    io_conf.pull_up_en = 1;
-    //bit mask of the pins that you want to set
-    io_conf.pin_bit_mask = 1ULL << Pin;
-    
-    //configure GPIO with the given settings
-    gpio_config(&io_conf);
-    // 设置外部中断处理程序
-    gpio_install_isr_service(Pin); // 初始化GPIO服务
-
-    // 设置外部中断处理函数
-    gpio_isr_handler_add(Pin, isr_handler, (void*) Pin);
-    
-}
 /******************************************************************************
 function:	PCF85063A initialized
 parameter:
@@ -234,8 +244,8 @@ Info:
 ******************************************************************************/
 void PCF85063A_Read_Alarm(datetime_t *time)
 {
-	uint8_t bufss[6] = {0};
-	ESP_ERROR_CHECK(DEV_I2C_Read_nByte(PCF85063A_ADDRESS, RTC_SECOND_ALARM, bufss, 7));
+	uint8_t bufss[5] = {0};
+	ESP_ERROR_CHECK(DEV_I2C_Read_nByte(PCF85063A_ADDRESS, RTC_SECOND_ALARM, bufss, sizeof(bufss)));
 	time->sec = bcdToDec(bufss[0] & 0x7F);
 	time->min = bcdToDec(bufss[1] & 0x7F);
 	time->hour = bcdToDec(bufss[2] & 0x3F);
