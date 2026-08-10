@@ -1,5 +1,7 @@
 # Repository Structure
 
+[中文](repository-structure_CN.md)
+
 This repository uses the Waveshare ESP32 product layout for ESP32-S3-Touch-LCD-4 and ESP32-S3-LCD-4:
 
 - `examples/esp-idf/`: first-party ESP-IDF projects for the shared 4-inch ESP32-S3 LCD board family.

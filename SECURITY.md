@@ -1,10 +1,12 @@
 # Security Policy
 
+[中文](SECURITY_CN.md)
+
 ## Reporting A Vulnerability
 
 Please do not open a public issue for a vulnerability that could put users at risk.
 
-Report security concerns through the repository security advisory flow when available, or through Waveshare support. Include a concise description, affected files or examples, reproduction steps, and any known mitigation.
+Report security concerns through an [official Waveshare support ticket](https://service.waveshare.com/). The [official support guidance](https://docs.waveshare.com/support) explains the channel. Include a concise description, affected files or examples, reproduction steps, and any known mitigation.
 
 ## Scope
 

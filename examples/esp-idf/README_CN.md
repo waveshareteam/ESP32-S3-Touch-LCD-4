@@ -18,8 +18,8 @@
 | 05 | [TWAItransmit](05_TWAItransmit/README_CN.md) | TWAI/CAN 周期发送路径 |
 | 06 | [lvgl_demo_v8](06_lvgl_demo_v8/README_CN.md) | BSP 显示启动、GT911 触摸初始化和 LVGL v8 widgets demo |
 | 07 | [lvgl_demo_v9](07_lvgl_demo_v9/README_CN.md) | BSP 显示启动、GT911 触摸相关启动和 LVGL v9 benchmark demo |
-| 08 | [BatteryVoltage_LVGL](09_BatteryVoltage_LVGL/README_CN.md) | CH32 ADC 电池电压采样并显示到 LVGL |
-| 09 | [ESP32-S3-Touch-LCD-4-esp-brookesia](08_ESP32-S3-Touch-LCD-4-esp-brookesia/README_CN.md) | 进阶触摸驱动 ESP-Brookesia Phone UI、应用注册和外设任务 |
+| 08 | [ESP32-S3-Touch-LCD-4-esp-brookesia](08_ESP32-S3-Touch-LCD-4-esp-brookesia/README_CN.md) | 进阶触摸驱动 ESP-Brookesia Phone UI、应用注册和外设任务 |
+| 09 | [BatteryVoltage_LVGL](09_BatteryVoltage_LVGL/README_CN.md) | CH32 ADC 电池电压采样并显示到 LVGL |
 
 ### 通用构建命令
 
@@ -27,7 +27,7 @@
 cd examples/esp-idf/ioexpander
 idf.py set-target esp32s3
 idf.py build
-idf.py -p PORT flash monitor
+idf.py -p <PORT> flash monitor
 ```
 
 把 `PORT` 替换成实际串口。第一次构建会下载 managed components，耗时会更长。

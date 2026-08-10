@@ -32,7 +32,7 @@ idf.py -p PORT flash monitor
 | [09_BatteryVoltage_LVGL](esp-idf/09_BatteryVoltage_LVGL/README_CN.md) | CH32 ADC 电池电压采样并显示到 LVGL | 显示/板级监控 |
 | [08_ESP32-S3-Touch-LCD-4-esp-brookesia](esp-idf/08_ESP32-S3-Touch-LCD-4-esp-brookesia/README_CN.md) | ESP-Brookesia Phone UI、计算器、画板和 CAN 任务 | 进阶 UI |
 
-ESP-IDF 和 Arduino 示例 CI 规则见 [../docs/CI_CN.md](../docs/CI_CN.md)，固件 artifact 打包说明见 [../releases/README.md](../releases/README.md)。
+ESP-IDF 和 Arduino 示例 CI 规则见 [../docs/CI_CN.md](../docs/CI_CN.md)，固件 artifact 打包说明见 [../releases/README_CN.md](../releases/README_CN.md)。
 
 ### Arduino 示例
 

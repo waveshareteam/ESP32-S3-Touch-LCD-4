@@ -7,20 +7,18 @@
   </p>
   <p>
     <a href="README.md">English</a> ·
-    <a href="https://www.waveshare.net/shop/ESP32-S3-Touch-LCD-4.htm">产品页面</a> ·
-    <a href="https://www.waveshare.net/wiki/ESP32-S3-Touch-LCD-4">产品文档</a> ·
-    <a href="https://github.com/waveshareteam/ESP32-S3-Touch-LCD-4/actions/workflows/examples.yml">CI 固件</a> ·
-    <a href="examples/esp-idf/">ESP-IDF 示例</a> ·
-    <a href="examples/arduino/">Arduino 示例</a>
+    <a href="https://www.waveshare.net/shop/ESP32-S3-Touch-LCD-4.htm">🌐 产品页面</a> ·
+    <a href="https://www.waveshare.net/wiki/ESP32-S3-Touch-LCD-4">📚 产品文档</a> ·
+    <a href="https://github.com/waveshareteam/ESP32-S3-Touch-LCD-4/actions/workflows/examples.yml">📦 CI 固件</a> ·
+    <a href="examples/esp-idf/">🧩 ESP-IDF 示例</a> ·
+    <a href="examples/arduino/">🔧 Arduino 示例</a>
   </p>
-  <a href="https://www.waveshare.net/shop/ESP32-S3-Touch-LCD-4.htm">
-    <img src="https://www.waveshare.com/w/upload/7/7b/ESP32-S3-Touch-LCD-4-P.jpg" alt="Waveshare ESP32-S3-Touch-LCD-4" width="500">
-  </a>
+  <img src="https://www.waveshare.com/w/upload/7/7b/ESP32-S3-Touch-LCD-4-P.jpg" alt="Waveshare ESP32-S3-Touch-LCD-4" width="500">
 </div>
 
 ---
 
-## 概述
+## ✨ 概述
 
 本仓库为 Waveshare ESP32-S3-Touch-LCD-4 和 ESP32-S3-LCD-4 提供第一方
 ESP-IDF 与 Arduino 示例、由源码构建且可直接烧录的 CI 固件、出厂恢复固件以及
@@ -35,7 +33,7 @@ Touch 版本另外配备 GT911 电容触摸屏。
 | ESP32-S3-Touch-LCD-4 | GT911 电容触摸 | 全部显示、触摸、LVGL 和 ESP-Brookesia 示例 |
 | ESP32-S3-LCD-4 | 未装配 | 显示与外设示例；依赖指针输入的流程需要适配 |
 
-## 硬件概览
+## 🖥️ 硬件概览
 
 | 功能 | 器件 / 接口 |
 | --- | --- |
@@ -57,7 +55,7 @@ Touch 版本另外配备 GT911 电容触摸屏。
 > 实际板卡版本为准。ESP32-S3-LCD-4 的特定硬件版本信息还应核对产品文档。部分在线
 > 资料描述的是使用不同 IO 扩展器或引脚连接的早期硬件版本。
 
-## 固件产物
+## 📦 固件产物
 
 体验源码示例最快的方式是从
 [Build Examples 工作流](https://github.com/waveshareteam/ESP32-S3-Touch-LCD-4/actions/workflows/examples.yml)
@@ -80,7 +78,7 @@ python3 releases/download_artifacts.py --clean
 是为带触摸板卡发布的二进制文件，不由 CI 重新构建。请将工厂/恢复固件与 CI 从源码
 构建的固件分开使用。两者的区别和烧录说明见[固件产物](docs/firmware_CN.md)。
 
-## 从源码构建
+## 🛠️ 从源码构建
 
 ### ESP-IDF
 
@@ -91,11 +89,10 @@ IO 扩展示例开始：
 cd examples/esp-idf/ioexpander
 idf.py set-target esp32s3
 idf.py build
-idf.py -p PORT flash monitor
+idf.py -p <PORT> flash monitor
 ```
 
-把 `PORT` 替换为开发板串口，例如 Windows 下的 `COM8` 或 Linux 下的
-`/dev/ttyACM0`。Arduino 板卡选项、随附库和推荐学习顺序见
+把 `<PORT>` 替换为开发板串口，例如 Windows 下的 `COMx`。Arduino 板卡选项、随附库和推荐学习顺序见
 [示例指南](examples/README_CN.md)。
 
 ### Arduino
@@ -114,7 +111,7 @@ arduino-cli compile \
   examples/arduino/01_HelloWorld
 ```
 
-## 示例
+## 🧪 示例
 
 ### ESP-IDF
 
@@ -125,7 +122,7 @@ arduino-cli compile \
 | [02_SD_Test](examples/esp-idf/02_SD_Test/README_CN.md) | microSD 挂载、读写、格式化和上电/复位流程 | 两款 |
 | [03_RTC_Test](examples/esp-idf/03_RTC_Test/README_CN.md) | PCF85063A 时间/日期读写和闹钟中断 | 两款 |
 | [04_TWAIreceive](examples/esp-idf/04_TWAIreceive/README_CN.md) | TWAI/CAN 接收和帧回传 | 两款 |
-| [05_TWAItransmit](examples/esp-idf/05_TWAItransmit/) | TWAI/CAN 周期发送测试帧 | 两款 |
+| [05_TWAItransmit](examples/esp-idf/05_TWAItransmit/README_CN.md) | TWAI/CAN 周期发送测试帧 | 两款 |
 | [06_lvgl_demo_v8](examples/esp-idf/06_lvgl_demo_v8/README_CN.md) | BSP 显示初始化和 LVGL v8 widgets | Touch 版直接使用；LCD-only 需适配 BSP 启动 |
 | [07_lvgl_demo_v9](examples/esp-idf/07_lvgl_demo_v9/README_CN.md) | BSP 显示初始化和 LVGL v9 benchmark | Touch 版直接使用；LCD-only 需适配 BSP 启动 |
 | [08_ESP32-S3-Touch-LCD-4-esp-brookesia](examples/esp-idf/08_ESP32-S3-Touch-LCD-4-esp-brookesia/README_CN.md) | ESP-Brookesia Phone UI、计算器、画板和 CAN 任务 | 推荐触摸版 |
@@ -153,7 +150,7 @@ arduino-cli compile \
 [`examples/arduino/libraries/`](examples/arduino/libraries/)。库自身的上游示例不会
 进入产品 CI 矩阵。
 
-## 支持的工具链
+## 🛠️ 支持的工具链
 
 | 开发框架 | 版本 | 第一方固件构建数 |
 | --- | --- | ---: |
@@ -162,14 +159,14 @@ arduino-cli compile \
 | Arduino-ESP32 | `3.3.11` | 13 |
 
 [Build Examples 工作流](https://github.com/waveshareteam/ESP32-S3-Touch-LCD-4/actions/workflows/examples.yml)
-会为完整矩阵运行 2 个发现任务、1 个选择器校验任务和 33 个固件构建任务。
+始终显示轻量 route 与 aggregate `ci-status` 状态，并按需运行最多 33 个固件构建任务。
 每个成功构建都会打包为可直接烧录的 artifact。
 [Test Repository Tools 工作流](https://github.com/waveshareteam/ESP32-S3-Touch-LCD-4/actions/workflows/repository-tools.yml)
 负责验证示例发现、选择器和发布工具。
 
-以上版本表示当前工作流配置，不是永久兼容承诺；工作流文件始终是版本真值。
+以上版本表示当前 CI 配置，不是永久兼容承诺；工作流与示例发现脚本共同是版本真值。
 
-## 板卡调试提示
+## 🔌 板卡调试提示
 
 - CH32V003 的 I2C 地址为 `0x24`。屏幕不亮或背光无法调节时，请先确认 CH32
   初始化成功。背光通过 `custom_io_expander_set_pwm()` 使用 CH32 PWM 控制，
@@ -180,7 +177,7 @@ arduino-cli compile \
 - 共享控制总线使用 SDA `GPIO15` 和 SCL `GPIO7`；RTC 闹钟信号连接到
   CH32V003 `EXIO7`。
 
-## 仓库结构
+## 🗂️ 仓库结构
 
 | 路径 | 用途 |
 | --- | --- |
@@ -192,28 +189,28 @@ arduino-cli compile \
 | [`config/`](config/) | 预留给可复用 ESP-IDF 共享 overlay；当前尚未启用 |
 | [`docs/`](docs/) | 仓库、CI、组件、固件和兼容性说明 |
 
-## 文档
+## 📚 文档
 
 - [产品文档](https://www.waveshare.net/wiki/ESP32-S3-Touch-LCD-4)
 - [硬件参考](hardware/HARDWARE_REFERENCE_CN.md)
 - [示例指南](examples/README_CN.md)
-- [仓库结构](docs/repository-structure.md)
+- [仓库结构](docs/repository-structure_CN.md)
 - [持续集成](docs/CI_CN.md)
-- [托管组件](docs/components.md)
+- [托管组件](docs/components_CN.md)
 - [固件与出厂恢复](docs/firmware_CN.md)
-- [发布工具](releases/README.md)
-- [ESP-Brookesia 说明](docs/brookesia.md)
+- [发布工具](releases/README_CN.md)
+- [ESP-Brookesia 说明](docs/brookesia_CN.md)
 
-## 支持与贡献
+## 🤝 支持与贡献
 
 欢迎提交贡献和可复现的问题报告。请提供板卡型号和版本、示例路径、框架版本、
 复现步骤、预期行为、实际行为以及相关串口日志。
 
-- [贡献指南](CONTRIBUTING.md)
-- [技术支持](SUPPORT.md)
-- [安全策略](SECURITY.md)
+- [贡献指南](CONTRIBUTING_CN.md)
+- [技术支持](SUPPORT_CN.md)
+- [安全策略](SECURITY_CN.md)
 - [提交 Issue](https://github.com/waveshareteam/ESP32-S3-Touch-LCD-4/issues/new/choose)
 
-## 许可证
+## 📄 许可证
 
 本仓库基于 Apache License 2.0 许可。详情见 [LICENSE.txt](LICENSE.txt)。

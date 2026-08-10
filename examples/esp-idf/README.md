@@ -18,8 +18,8 @@ Run `ioexpander` first to verify CH32, backlight, reset pins, and battery ADC, t
 | 05 | [TWAItransmit](05_TWAItransmit/) | TWAI/CAN periodic transmit path |
 | 06 | [lvgl_demo_v8](06_lvgl_demo_v8/) | BSP display startup, GT911 touch initialization, and LVGL v8 widgets demo |
 | 07 | [lvgl_demo_v9](07_lvgl_demo_v9/) | BSP display startup, GT911 touch-capable startup, and LVGL v9 benchmark demo |
-| 08 | [BatteryVoltage_LVGL](09_BatteryVoltage_LVGL/) | CH32 ADC battery-voltage sampling displayed in LVGL |
-| 09 | [ESP32-S3-Touch-LCD-4-esp-brookesia](08_ESP32-S3-Touch-LCD-4-esp-brookesia/) | Advanced touch-driven ESP-Brookesia Phone UI, app registration, and peripheral tasks |
+| 08 | [ESP32-S3-Touch-LCD-4-esp-brookesia](08_ESP32-S3-Touch-LCD-4-esp-brookesia/) | Advanced touch-driven ESP-Brookesia Phone UI, app registration, and peripheral tasks |
+| 09 | [BatteryVoltage_LVGL](09_BatteryVoltage_LVGL/) | CH32 ADC battery-voltage sampling displayed in LVGL |
 
 ### Common Build Commands
 
@@ -27,10 +27,10 @@ Run `ioexpander` first to verify CH32, backlight, reset pins, and battery ADC, t
 cd examples/esp-idf/ioexpander
 idf.py set-target esp32s3
 idf.py build
-idf.py -p PORT flash monitor
+idf.py -p <PORT> flash monitor
 ```
 
-Replace `PORT` with the actual serial port. The first build may take longer because managed components are downloaded.
+Replace `<PORT>` with the actual serial port, such as `COMx` on Windows. The first build may take longer because managed components are downloaded.
 
 ### Adding New Examples
 

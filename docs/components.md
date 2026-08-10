@@ -1,5 +1,7 @@
 # Components
 
+[中文](components_CN.md)
+
 ESP-IDF examples prefer managed components where possible:
 
 - `waveshare/esp32_s3_touch_lcd_4` provides the board display, GT911 touch, and BSP integration used by LVGL and ESP-Brookesia examples. ESP32-S3-LCD-4 shares the display/peripheral path but does not populate GT911, so touch input should be treated as optional or disabled on that variant.

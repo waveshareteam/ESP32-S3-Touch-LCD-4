@@ -1,5 +1,7 @@
 # Release Scripts
 
+[中文](README_CN.md)
+
 This directory contains helper scripts for packaging build outputs into flashable firmware archives.
 
 Command examples below match the workflow versions current at the time of this update. The workflow file remains the source of truth when framework pins change.

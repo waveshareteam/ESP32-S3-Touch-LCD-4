@@ -1,5 +1,7 @@
 # Contributing
 
+[中文](CONTRIBUTING_CN.md)
+
 Thank you for improving this board repository.
 
 ## Pull Requests
@@ -8,7 +10,7 @@ Thank you for improving this board repository.
 2. Keep changes focused on one topic.
 3. Update the relevant README or documentation when paths, behavior, hardware assumptions, or CI coverage change.
 4. Use repo-relative paths in discussions and validation notes.
-5. Let GitHub Actions validate ESP-IDF and Arduino examples for repository changes.
+5. Let GitHub Actions classify changes and validate the affected ESP-IDF and Arduino examples.
 
 ## Local Generated Files
 
