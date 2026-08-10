@@ -32,7 +32,7 @@ jobs:
       release_review_required: ${{ steps.route.outputs.release_review_required }}
       route_summary: ${{ steps.route.outputs.route_summary }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
@@ -93,7 +93,7 @@ jobs:
       fail-fast: false
       matrix: ${{ fromJSON(needs.route.outputs.idf_matrix) }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
@@ -107,7 +107,7 @@ jobs:
         shell: bash
         run: |
           python3 releases/package_firmware.py --framework esp-idf --project "${{ matrix.path }}" --build-dir "build/${{ matrix.name }}-${{ matrix.idf }}" --name "ESP32-S3-Touch-LCD-4-${{ matrix.name }}-${{ matrix.idf }}" --framework-version "${{ matrix.idf }}" --target esp32s3 --git-sha "${{ github.event.pull_request.head.sha || github.sha }}" --output-dir release-artifacts
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: firmware-esp-idf-${{ matrix.name }}-${{ matrix.idf }}
           path: release-artifacts/*.zip
@@ -121,7 +121,7 @@ jobs:
       fail-fast: false
       matrix: ${{ fromJSON(needs.route.outputs.arduino_matrix) }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
@@ -138,7 +138,7 @@ jobs:
       - name: Package firmware
         run: |
           python3 releases/package_firmware.py --framework arduino --project "${{ matrix.path }}" --build-dir "build/${{ matrix.name }}-${{ matrix.core }}" --name "ESP32-S3-Touch-LCD-4-${{ matrix.name }}-arduino-${{ matrix.core }}" --framework-version "${{ matrix.core }}" --target esp32s3 --git-sha "${{ github.event.pull_request.head.sha || github.sha }}" --output-dir release-artifacts
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: firmware-arduino-${{ matrix.name }}-${{ matrix.core }}
           path: release-artifacts/*.zip

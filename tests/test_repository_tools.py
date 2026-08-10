@@ -185,6 +185,21 @@ class WorkflowContractTests(unittest.TestCase):
         self.assertIn('"$IDF" != success && "$IDF" != skipped', workflow)
         self.assertIn('"$ARDUINO" != success && "$ARDUINO" != skipped', workflow)
 
+    def test_workflows_use_current_node24_actions_majors(self) -> None:
+        examples_workflow = (REPO_ROOT / ".github/workflows/examples.yml").read_text(
+            encoding="utf-8"
+        )
+        repository_tools_workflow = (
+            REPO_ROOT / ".github/workflows/repository-tools.yml"
+        ).read_text(encoding="utf-8")
+
+        for workflow in (examples_workflow, repository_tools_workflow):
+            self.assertIn("actions/checkout@v5", workflow)
+            self.assertNotIn("actions/checkout@v4", workflow)
+        self.assertIn("actions/upload-artifact@v6", examples_workflow)
+        self.assertNotIn("actions/upload-artifact@v4", examples_workflow)
+        self.assertIn("arduino/setup-arduino-cli@v2", examples_workflow)
+
     def test_markdown_audit_scope_control_flow_handles_all_events(self) -> None:
         workflow = (REPO_ROOT / ".github/workflows/examples.yml").read_text(
             encoding="utf-8"
