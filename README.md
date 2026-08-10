@@ -1,26 +1,24 @@
 <div align="center">
-  <h1>ESP32-S3-Touch-LCD-4</h1>
-  <p><strong>ESP32-S3 4-inch 480 x 480 RGB LCD development board with optional GT911 capacitive touch</strong></p>
+  <h1>ESP32-S3-LCD-4 / ESP32-S3-Touch-LCD-4</h1>
+  <p><strong>ESP32-S3 4-inch 480 x 480 RGB LCD development board family, with and without GT911 capacitive touch</strong></p>
   <p>
     <a href="https://github.com/waveshareteam/ESP32-S3-Touch-LCD-4/actions/workflows/examples.yml"><img alt="Build Examples" src="https://github.com/waveshareteam/ESP32-S3-Touch-LCD-4/actions/workflows/examples.yml/badge.svg"></a>
     <a href="LICENSE.txt"><img alt="License" src="https://img.shields.io/github/license/waveshareteam/ESP32-S3-Touch-LCD-4"></a>
   </p>
   <p>
     <a href="README_CN.md">中文</a> ·
-    <a href="https://www.waveshare.com/esp32-s3-touch-lcd-4.htm">Product Page</a> ·
-    <a href="https://www.waveshare.com/wiki/ESP32-S3-Touch-LCD-4">Documentation</a> ·
-    <a href="https://github.com/waveshareteam/ESP32-S3-Touch-LCD-4/actions/workflows/examples.yml">CI Firmware</a> ·
-    <a href="examples/esp-idf/">ESP-IDF Examples</a> ·
-    <a href="examples/arduino/">Arduino Examples</a>
+    <a href="https://www.waveshare.com/product/esp32-s3-touch-lcd-4.htm">🌐 Product Page</a> ·
+    <a href="https://www.waveshare.com/wiki/ESP32-S3-Touch-LCD-4">📚 Documentation</a> ·
+    <a href="https://github.com/waveshareteam/ESP32-S3-Touch-LCD-4/actions/workflows/examples.yml">📦 CI Firmware</a> ·
+    <a href="examples/esp-idf/">🧩 ESP-IDF Examples</a> ·
+    <a href="examples/arduino/">🔧 Arduino Examples</a>
   </p>
-  <a href="https://www.waveshare.com/esp32-s3-touch-lcd-4.htm">
-    <img src="https://www.waveshare.com/w/upload/7/7b/ESP32-S3-Touch-LCD-4-P.jpg" alt="Waveshare ESP32-S3-Touch-LCD-4" width="500">
-  </a>
+  <img src="assets/ESP32-S3-LCD-4-family.jpg" alt="Waveshare ESP32-S3-LCD-4 and ESP32-S3-Touch-LCD-4 product family" width="500">
 </div>
 
 ---
 
-## Overview
+## ✨ Overview
 
 This repository provides first-party ESP-IDF and Arduino examples, source-built
 flashable CI firmware, factory recovery firmware, and V4.0 hardware references
@@ -36,7 +34,7 @@ touch panel.
 | ESP32-S3-Touch-LCD-4 | GT911 capacitive touch | All display, touch, LVGL, and ESP-Brookesia examples |
 | ESP32-S3-LCD-4 | Not populated | Display and peripheral examples; adapt workflows that require pointer input |
 
-## Hardware Overview
+## 🖥️ Hardware Overview
 
 | Feature | Device / interface |
 | --- | --- |
@@ -60,7 +58,7 @@ touch panel.
 > for ESP32-S3-LCD-4. Some online material describes earlier revisions with a
 > different IO expander or pin routing.
 
-## Firmware Artifacts
+## 📦 Firmware Artifacts
 
 The fastest way to try a source-built example is to download a flashable
 artifact from the
@@ -85,7 +83,7 @@ is a released binary for the touch-equipped board and is not rebuilt by CI.
 Keep factory/recovery firmware separate from source-built CI artifacts. See
 [Firmware Artifacts](docs/firmware.md) for the distinction and flashing notes.
 
-## Build From Source
+## 🛠️ Build From Source
 
 ### ESP-IDF
 
@@ -96,11 +94,10 @@ IO expander example using one of the versions configured in CI:
 cd examples/esp-idf/ioexpander
 idf.py set-target esp32s3
 idf.py build
-idf.py -p PORT flash monitor
+idf.py -p <PORT> flash monitor
 ```
 
-Replace `PORT` with the board serial port, such as `COM8` on Windows or
-`/dev/ttyACM0` on Linux. For Arduino board options, bundled libraries, and the
+Replace `<PORT>` with the board serial port, such as `COMx` on Windows. For Arduino board options, bundled libraries, and the
 recommended learning order, see the [Examples Guide](examples/README.md).
 
 ### Arduino
@@ -119,7 +116,7 @@ arduino-cli compile \
   examples/arduino/01_HelloWorld
 ```
 
-## Examples
+## 🧪 Examples
 
 ### ESP-IDF
 
@@ -158,7 +155,7 @@ Bundled Arduino libraries live under
 [`examples/arduino/libraries/`](examples/arduino/libraries/). Their upstream
 library examples are intentionally excluded from the product CI matrix.
 
-## Supported Toolchains
+## 🛠️ Supported Toolchains
 
 | Surface | Version | First-party firmware builds |
 | --- | --- | ---: |
@@ -168,16 +165,16 @@ library examples are intentionally excluded from the product CI matrix.
 
 The
 [Build Examples workflow](https://github.com/waveshareteam/ESP32-S3-Touch-LCD-4/actions/workflows/examples.yml)
-runs two discovery jobs, selector validation, and 33 firmware build jobs for
-the full matrix. Every successful build is packaged as a flashable artifact.
+runs a change classifier and stable `ci-status` check, with at most 33 firmware build jobs for the full matrix. Markdown-only changes skip builds; direct source changes select only their owning example, while shared or unknown source inputs conservatively expand coverage. Every successful build is packaged as a flashable artifact.
 The companion
 [Test Repository Tools workflow](https://github.com/waveshareteam/ESP32-S3-Touch-LCD-4/actions/workflows/repository-tools.yml)
 checks example discovery, selectors, and release tooling.
 
-These versions describe the current workflow configuration rather than a
-permanent compatibility promise. The workflow files remain the source of truth.
+These versions describe the current CI configuration rather than a permanent
+compatibility promise. The workflow and discovery script together remain the
+source of truth.
 
-## Board Bring-Up Notes
+## 🔌 Board Bring-Up Notes
 
 - CH32V003 uses I2C address `0x24`. If the screen is dark or brightness
   does not change, confirm CH32 initialization. Backlight uses CH32 PWM through
@@ -190,7 +187,7 @@ permanent compatibility promise. The workflow files remain the source of truth.
 - The shared control bus uses SDA `GPIO15` and SCL `GPIO7`; RTC alarm routing
   reaches CH32V003 `EXIO7`.
 
-## Repository Layout
+## 🗂️ Repository Layout
 
 | Path | Purpose |
 | --- | --- |
@@ -202,7 +199,7 @@ permanent compatibility promise. The workflow files remain the source of truth.
 | [`config/`](config/) | Reserved for reusable shared ESP-IDF overlays; none are active yet |
 | [`docs/`](docs/) | Repository, CI, component, firmware, and compatibility notes |
 
-## Documentation
+## 📚 Documentation
 
 - [Product Documentation](https://www.waveshare.com/wiki/ESP32-S3-Touch-LCD-4)
 - [Hardware Reference](hardware/HARDWARE_REFERENCE.md)
@@ -214,7 +211,7 @@ permanent compatibility promise. The workflow files remain the source of truth.
 - [Release Tools](releases/README.md)
 - [ESP-Brookesia Notes](docs/brookesia.md)
 
-## Support and Contributions
+## 🤝 Support and Contributions
 
 Contributions and reproducible issue reports are welcome. Include the board
 model and revision, example path, framework version, reproduction steps,
@@ -225,7 +222,7 @@ expected behavior, actual behavior, and relevant serial logs.
 - [Security Policy](SECURITY.md)
 - [Open an Issue](https://github.com/waveshareteam/ESP32-S3-Touch-LCD-4/issues/new/choose)
 
-## License
+## 📄 License
 
 This repository is licensed under Apache License 2.0. See
 [LICENSE.txt](LICENSE.txt).

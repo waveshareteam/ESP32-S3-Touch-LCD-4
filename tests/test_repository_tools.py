@@ -4,6 +4,7 @@ import argparse
 import importlib.util
 import json
 import os
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -25,6 +26,7 @@ def load_module(name: str, relative_path: str):
 
 
 discover = load_module("discover_examples", "scripts/discover_examples.py")
+route_ci = load_module("route_ci", "scripts/route_ci.py")
 package_firmware = load_module("package_firmware", "releases/package_firmware.py")
 download_artifacts = load_module(
     "download_artifacts_impl", "releases/download_artifacts_impl.py"
@@ -140,11 +142,203 @@ class WorkflowContractTests(unittest.TestCase):
             encoding="utf-8"
         )
 
-        self.assertIn("--idf-versions v5.5.5,v6.0.2", workflow)
-        self.assertIn("--arduino-core 3.3.11", workflow)
-        self.assertIn("No examples matched selector", workflow)
-        self.assertIn('"releases/package_firmware.py"', workflow)
+        router = (REPO_ROOT / "scripts/route_ci.py").read_text(encoding="utf-8")
+        self.assertIn("DEFAULT_IDF_VERSIONS", router)
+        self.assertIn("DEFAULT_ARDUINO_CORE", router)
+        self.assertIn("No examples matched selector", router)
+        self.assertIn("releases/package_firmware.py", workflow)
         self.assertNotIn('"releases/**"', workflow)
+
+    def test_routing_workflow_has_always_status_and_pr_concurrency(self) -> None:
+        workflow = (REPO_ROOT / ".github/workflows/examples.yml").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn("fetch-depth: 0", workflow)
+        self.assertIn("python3 scripts/route_ci.py --base", workflow)
+        self.assertIn("python3 scripts/route_ci.py --selector", workflow)
+        self.assertIn(
+            'python3 scripts/audit_markdown.py . --base "$base" --config config/markdown-audit.json --format json',
+            workflow,
+        )
+        self.assertIn(
+            'python3 scripts/audit_markdown.py . --base "$base" --config config/markdown-audit.json --format json --expect-docs-only',
+            workflow,
+        )
+        self.assertIn(
+            "python3 scripts/audit_markdown.py . --all --config config/markdown-audit.json --format json",
+            workflow,
+        )
+        self.assertNotIn("audit_markdown.py . --all --strict", workflow)
+        self.assertIn("if: needs.route.outputs.idf_count != '0'", workflow)
+        self.assertIn("if: needs.route.outputs.arduino_count != '0'", workflow)
+        self.assertIn("ci-status:", workflow)
+        self.assertIn("if: always()", workflow)
+        self.assertIn("cancel-in-progress: ${{ github.event_name == 'pull_request' }}", workflow)
+        self.assertEqual(
+            workflow.count("ref: ${{ github.event.pull_request.head.sha || github.sha }}"),
+            3,
+        )
+        self.assertEqual(
+            workflow.count("--git-sha \"${{ github.event.pull_request.head.sha || github.sha }}\""),
+            2,
+        )
+        self.assertIn('"$IDF" != success && "$IDF" != skipped', workflow)
+        self.assertIn('"$ARDUINO" != success && "$ARDUINO" != skipped', workflow)
+
+    def test_workflows_use_current_node24_actions_majors(self) -> None:
+        examples_workflow = (REPO_ROOT / ".github/workflows/examples.yml").read_text(
+            encoding="utf-8"
+        )
+        repository_tools_workflow = (
+            REPO_ROOT / ".github/workflows/repository-tools.yml"
+        ).read_text(encoding="utf-8")
+
+        for workflow in (examples_workflow, repository_tools_workflow):
+            self.assertIn("actions/checkout@v5", workflow)
+            self.assertNotIn("actions/checkout@v4", workflow)
+        self.assertIn("actions/upload-artifact@v6", examples_workflow)
+        self.assertNotIn("actions/upload-artifact@v4", examples_workflow)
+        self.assertIn("arduino/setup-arduino-cli@v2", examples_workflow)
+
+    def test_markdown_audit_scope_control_flow_handles_all_events(self) -> None:
+        workflow = (REPO_ROOT / ".github/workflows/examples.yml").read_text(
+            encoding="utf-8"
+        )
+
+        self.assertIn("BEFORE: ${{ github.event.before }}", workflow)
+        self.assertIn('if [[ "$EVENT_NAME" == "pull_request" ]]; then', workflow)
+        self.assertIn('base="$(git merge-base "origin/$BASE_REF" HEAD)"', workflow)
+        self.assertIn('run_changed_scope "$base"', workflow)
+        self.assertIn(
+            'elif [[ "$EVENT_NAME" == "push" && "$GITHUB_REF" != refs/tags/* && -n "$BEFORE" && ! "$BEFORE" =~ ^0+$ ]]; then',
+            workflow,
+        )
+        self.assertIn('run_changed_scope "$BEFORE"', workflow)
+        self.assertEqual(workflow.count("run_changed_scope \""), 2)
+        self.assertIn(
+            "python3 scripts/audit_markdown.py . --all --config config/markdown-audit.json --format json",
+            workflow,
+        )
+
+
+class RoutingTests(unittest.TestCase):
+    def setUp(self) -> None:
+        self.temp_dir = tempfile.TemporaryDirectory()
+        self.repo = Path(self.temp_dir.name)
+        write_file(self.repo, "examples/esp-idf/Alpha/CMakeLists.txt")
+        write_file(self.repo, "examples/esp-idf/Beta/CMakeLists.txt")
+        write_file(self.repo, "examples/arduino/Blink/Blink.ino")
+        write_file(self.repo, "examples/arduino/Clock/Clock.ino")
+
+    def tearDown(self) -> None:
+        self.temp_dir.cleanup()
+
+    def outputs(self, changes: str, selector: str = "") -> dict[str, str]:
+        return route_ci.route_outputs(route_ci.parse_name_status(changes), self.repo, selector)
+
+    def counts(self, output: dict[str, str]) -> tuple[int, int]:
+        return int(output["idf_count"]), int(output["arduino_count"])
+
+    def test_markdown_never_selects_example_builds(self) -> None:
+        for path in (
+            "README.md",
+            "examples/esp-idf/Alpha/README.md",
+            "examples/arduino/Blink/README.md",
+            "examples/arduino/libraries/Bundled/README.md",
+        ):
+            with self.subTest(path=path):
+                output = self.outputs(f"M\t{path}\n")
+                self.assertEqual(self.counts(output), (0, 0))
+                self.assertEqual(output["docs_only"], "true")
+
+    def test_direct_sources_select_only_the_owning_entry(self) -> None:
+        idf = self.outputs("M\texamples/esp-idf/Alpha/main/main.c\n")
+        arduino = self.outputs("M\texamples/arduino/Clock/Clock.ino\n")
+        self.assertEqual(self.counts(idf), (2, 0))
+        self.assertEqual(self.counts(arduino), (0, 1))
+
+    def test_cmake_and_text_inputs_are_not_documents(self) -> None:
+        cmake = self.outputs("M\texamples/esp-idf/Alpha/CMakeLists.txt\n")
+        text = self.outputs("M\texamples/arduino/Clock/notes.txt\n")
+        self.assertEqual(self.counts(cmake), (2, 0))
+        self.assertEqual(self.counts(text), (0, 1))
+
+    def test_governance_inputs_skip_product_builds(self) -> None:
+        for path in (
+            "LICENSE",
+            "CODE_OF_CONDUCT.md",
+            ".github/ISSUE_TEMPLATE/bug_report.md",
+            ".github/pull_request_template.md",
+            "tests/test_repository_tools.py",
+            "config/markdown-audit.json",
+            "releases/README.md",
+            "releases/download_artifacts.py",
+        ):
+            with self.subTest(path=path):
+                self.assertEqual(self.counts(self.outputs(f"M\t{path}\n")), (0, 0))
+
+    def test_document_assets_and_release_archives_skip_example_builds(self) -> None:
+        asset = self.outputs("M\tdocs/diagram.png\n")
+        self.assertEqual(self.counts(asset), (0, 0))
+        self.assertEqual(asset["docs_only"], "true")
+        family_asset = self.outputs("M\tassets/ESP32-S3-LCD-4-family.jpg\n")
+        self.assertEqual(self.counts(family_asset), (0, 0))
+        self.assertEqual(family_asset["docs_only"], "true")
+        archive = self.outputs("M\treleases/delivery.zip\n")
+        self.assertEqual(self.counts(archive), (0, 0))
+        self.assertEqual(archive["release_review_required"], "true")
+        self.assertEqual(archive["firmware_touched"], "false")
+        self.assertIn("release review required", archive["route_summary"])
+
+        owned_archive = self.outputs(
+            "M\texamples/esp-idf/Alpha/main/runtime-assets.zip\n"
+        )
+        self.assertEqual(self.counts(owned_archive), (2, 0))
+        self.assertEqual(owned_archive["release_review_required"], "false")
+
+    def test_shared_global_unknown_and_firmware_paths_are_safe(self) -> None:
+        self.assertEqual(self.counts(self.outputs("M\tconfig/sdkconfig.defaults\n")), (4, 0))
+        self.assertEqual(self.counts(self.outputs("M\texamples/arduino/libraries/B/src/B.cpp\n")), (0, 2))
+        workflow = self.outputs("M\t.github/workflows/examples.yml\n")
+        self.assertEqual(self.counts(workflow), (4, 2))
+        self.assertNotIn("unknown paths", workflow["route_summary"])
+        self.assertEqual(
+            route_ci.normalize("./.github/workflows/examples.yml/"),
+            ".github/workflows/examples.yml",
+        )
+        unknown = self.outputs("M\ttools/new-input.py\n")
+        self.assertEqual(self.counts(unknown), (4, 2))
+        self.assertIn("unknown paths", unknown["route_summary"])
+        for path in ("firmware/README.md", "firmware/app.c", "firmware/app.bin", "firmware/release.zip"):
+            output = self.outputs(f"M\t{path}\n")
+            self.assertEqual(self.counts(output), (0, 0))
+            self.assertEqual(output["firmware_touched"], "true")
+            self.assertEqual(
+                output["release_review_required"],
+                str(path.endswith((".bin", ".zip"))).lower(),
+            )
+
+    def test_rename_and_delete_include_old_paths(self) -> None:
+        output = self.outputs("R100\texamples/esp-idf/Alpha/main/a.c\texamples/esp-idf/Beta/main/b.c\nD\texamples/arduino/Blink/Blink.ino\n")
+        self.assertEqual(self.counts(output), (4, 1))
+
+    def test_manual_selector_rejects_no_match(self) -> None:
+        selected = self.outputs("", "Alpha")
+        self.assertEqual(self.counts(selected), (2, 0))
+        self.assertIn("ESP-IDF: examples/esp-idf/Alpha", selected["route_summary"])
+        self.assertNotIn("all ESP-IDF", selected["route_summary"])
+        with self.assertRaises(ValueError):
+            self.outputs("", "does-not-exist")
+
+    def test_empty_cli_diff_exits_two(self) -> None:
+        result = subprocess.run(
+            [sys.executable, str(REPO_ROOT / "scripts/route_ci.py"), "--repo", str(self.repo)],
+            input="",
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+        self.assertEqual(result.returncode, 2)
 
 
 class ReleaseHelperTests(unittest.TestCase):

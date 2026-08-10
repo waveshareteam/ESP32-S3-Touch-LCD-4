@@ -1,0 +1,54 @@
+{
+  "classification_rules": [],
+  "exclude_patterns": [],
+  "pair_exempt_patterns": [
+    ".github/ISSUE_TEMPLATE/bug_report.md",
+    ".github/pull_request_template.md"
+  ],
+  "language_link_exempt_patterns": [],
+  "relative_link_ignore_patterns": [],
+  "docs_only_allowed_patterns": ["assets/ESP32-S3-LCD-4-family.jpg"],
+  "sensitive_allow_regexes": [],
+  "bilingual_pairs": [
+    {"english": "README.md", "chinese": "README_CN.md"},
+    {"english": "examples/README.md", "chinese": "examples/README_CN.md"},
+    {"english": "examples/esp-idf/README.md", "chinese": "examples/esp-idf/README_CN.md"},
+    {"english": "examples/arduino/README.md", "chinese": "examples/arduino/README_CN.md"},
+    {"english": "examples/esp-idf/ioexpander/README.md", "chinese": "examples/esp-idf/ioexpander/README_CN.md"},
+    {"english": "examples/esp-idf/01_RS485_Test/README.md", "chinese": "examples/esp-idf/01_RS485_Test/README_CN.md"},
+    {"english": "examples/esp-idf/02_SD_Test/README.md", "chinese": "examples/esp-idf/02_SD_Test/README_CN.md"},
+    {"english": "examples/esp-idf/03_RTC_Test/README.md", "chinese": "examples/esp-idf/03_RTC_Test/README_CN.md"},
+    {"english": "examples/esp-idf/04_TWAIreceive/README.md", "chinese": "examples/esp-idf/04_TWAIreceive/README_CN.md"},
+    {"english": "examples/esp-idf/05_TWAItransmit/README.md", "chinese": "examples/esp-idf/05_TWAItransmit/README_CN.md"},
+    {"english": "examples/esp-idf/06_lvgl_demo_v8/README.md", "chinese": "examples/esp-idf/06_lvgl_demo_v8/README_CN.md"},
+    {"english": "examples/esp-idf/07_lvgl_demo_v9/README.md", "chinese": "examples/esp-idf/07_lvgl_demo_v9/README_CN.md"},
+    {"english": "examples/esp-idf/08_ESP32-S3-Touch-LCD-4-esp-brookesia/README.md", "chinese": "examples/esp-idf/08_ESP32-S3-Touch-LCD-4-esp-brookesia/README_CN.md"},
+    {"english": "examples/esp-idf/09_BatteryVoltage_LVGL/README.md", "chinese": "examples/esp-idf/09_BatteryVoltage_LVGL/README_CN.md"},
+    {"english": "docs/CI.md", "chinese": "docs/CI_CN.md"},
+    {"english": "docs/firmware.md", "chinese": "docs/firmware_CN.md"},
+    {"english": "docs/brookesia.md", "chinese": "docs/brookesia_CN.md"},
+    {"english": "docs/components.md", "chinese": "docs/components_CN.md"},
+    {"english": "docs/repository-structure.md", "chinese": "docs/repository-structure_CN.md"},
+    {"english": "hardware/HARDWARE_REFERENCE.md", "chinese": "hardware/HARDWARE_REFERENCE_CN.md"},
+    {"english": "firmware/README.md", "chinese": "firmware/README_CN.md"},
+    {"english": "releases/README.md", "chinese": "releases/README_CN.md"},
+    {"english": "config/README.md", "chinese": "config/README_CN.md"},
+    {"english": "CONTRIBUTING.md", "chinese": "CONTRIBUTING_CN.md"},
+    {"english": "SUPPORT.md", "chinese": "SUPPORT_CN.md"},
+    {"english": "SECURITY.md", "chinese": "SECURITY_CN.md"}
+  ],
+  "bilingual_directory_mappings": [],
+  "homepage_h3_emoji_allow_patterns": [],
+  "homepage_pairs": [
+    {
+      "english": "README.md",
+      "chinese": "README_CN.md",
+      "profile": "multi-product-hub",
+      "required_components": ["centered_header", "html_h1", "subtitle", "badges", "language_switch", "quick_links", "hero_image", "separator", "h2"],
+      "required_quick_links": ["product", "documentation", "firmware", "esp_idf", "arduino"],
+      "required_badges": ["build", "license"],
+      "required_h2_icons": ["✨", "🖥️", "📦", "🛠️", "🧪", "🛠️", "🔌", "🗂️", "📚", "🤝", "📄"],
+      "h3_emoji_allow_patterns": []
+    }
+  ]
+}

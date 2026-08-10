@@ -80,10 +80,10 @@ LCD 正常工作时，建议保持 `SYS_EN`、`LCD_RST`、`TP_RST` 为高电平�
 cd examples/esp-idf/ioexpander
 idf.py set-target esp32s3
 idf.py build
-idf.py -p PORT flash monitor
+idf.py -p <PORT> flash monitor
 ```
 
-把 `PORT` 替换成实际串口，例如 Windows 下的 `COM8` 或 Linux 下的 `/dev/ttyACM0`。
+把 `<PORT>` 替换成实际串口，例如 Windows 下的 `COMx`。
 
 ### 期望串口日志
 

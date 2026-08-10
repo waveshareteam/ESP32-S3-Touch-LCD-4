@@ -1,4 +1,5 @@
-set(LV_DEMO_DIR ../managed_components/lvgl__lvgl/demos)
+idf_component_get_property(LVGL_COMPONENT_DIR lvgl__lvgl COMPONENT_DIR)
+set(LV_DEMO_DIR "${LVGL_COMPONENT_DIR}/demos")
 file(GLOB_RECURSE LV_DEMOS_SOURCES ${LV_DEMO_DIR}/*.c)
 set(EXTRA_REQUIRES)
 list(APPEND EXTRA_REQUIRES nvs_flash)

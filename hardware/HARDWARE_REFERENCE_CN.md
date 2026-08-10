@@ -59,4 +59,4 @@
 
 - 原理图：[`hardware/schematics/ESP32-S3-Touch-LCD-4 V4.0.pdf`](<schematics/ESP32-S3-Touch-LCD-4 V4.0.pdf>)
 - 工厂/恢复镜像：[`firmware/`](../firmware/)
-- 托管组件策略：[`docs/components.md`](../docs/components.md)
+- 托管组件策略：[`docs/components_CN.md`](../docs/components_CN.md)

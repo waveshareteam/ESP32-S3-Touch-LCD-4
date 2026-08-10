@@ -45,4 +45,4 @@ core 版本和 FQBN 以工作流文件为准。以上选项配置 ESP32-S3、硬
 
 只有 ESP32-S3-Touch-LCD-4 带 GT911 触摸控制器。`03_Drawing_points` 和 `09_LVGL_Widgets` 会在运行时探测 GT911，无指针输入时仍可继续运行。其他依赖触摸的固件应视为 Touch 版本固件，除非源码或文档明确说明支持无触摸模式。
 
-其他说明见 [完整示例地图](../README_CN.md)、[CI 规则](../../docs/CI_CN.md) 和 [固件 artifact 下载](../../releases/README.md)。
+其他说明见 [完整示例地图](../README_CN.md)、[CI 规则](../../docs/CI_CN.md) 和 [固件 artifact 下载](../../releases/README_CN.md)。

@@ -11,6 +11,7 @@ on:
       - "scripts/**"
       - "releases/*.py"
       - "tests/**"
+      - "config/**"
   pull_request:
     paths:
       - ".github/workflows/examples.yml"
@@ -18,16 +19,21 @@ on:
       - "scripts/**"
       - "releases/*.py"
       - "tests/**"
+      - "config/**"
   workflow_dispatch:
 
 permissions:
   contents: read
 
+concurrency:
+  group: repository-tools-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
   unit-tests:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Show Python version
         run: python3 --version
       - name: Run repository tool tests

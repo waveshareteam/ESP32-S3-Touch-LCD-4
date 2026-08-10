@@ -2,26 +2,9 @@ name: Build Examples
 
 on:
   push:
-    branches:
-      - main
-      - master
-    tags:
-      - "v*"
-    paths:
-      - ".github/workflows/examples.yml"
-      - "scripts/discover_examples.py"
-      - "releases/package_firmware.py"
-      - "config/**"
-      - "examples/esp-idf/**"
-      - "examples/arduino/**"
+    branches: [main, master]
+    tags: ["v*"]
   pull_request:
-    paths:
-      - ".github/workflows/examples.yml"
-      - "scripts/discover_examples.py"
-      - "releases/package_firmware.py"
-      - "config/**"
-      - "examples/esp-idf/**"
-      - "examples/arduino/**"
   workflow_dispatch:
     inputs:
       target:
@@ -32,51 +15,88 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: examples-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
-  discover-esp-idf:
+  route:
     runs-on: ubuntu-latest
     outputs:
-      matrix: ${{ steps.discover.outputs.matrix }}
-      count: ${{ steps.discover.outputs.count }}
+      idf_matrix: ${{ steps.route.outputs.idf_matrix }}
+      arduino_matrix: ${{ steps.route.outputs.arduino_matrix }}
+      idf_count: ${{ steps.route.outputs.idf_count }}
+      arduino_count: ${{ steps.route.outputs.arduino_count }}
+      docs_only: ${{ steps.route.outputs.docs_only }}
+      firmware_touched: ${{ steps.route.outputs.firmware_touched }}
+      release_review_required: ${{ steps.route.outputs.release_review_required }}
+      route_summary: ${{ steps.route.outputs.route_summary }}
     steps:
-      - uses: actions/checkout@v4
-      - id: discover
-        run: |
-          python3 scripts/discover_examples.py \
-            --surface esp-idf \
-            --selector "${{ github.event.inputs.target || 'all' }}" \
-            --idf-versions v5.5.5,v6.0.2 \
-            --github-output "$GITHUB_OUTPUT"
-
-  validate-selection:
-    needs:
-      - discover-esp-idf
-      - discover-arduino
-    runs-on: ubuntu-latest
-    steps:
-      - name: Require at least one matching example
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - id: route
+        shell: bash
         env:
-          SELECTOR: ${{ github.event.inputs.target || 'all' }}
-          ESP_IDF_COUNT: ${{ needs.discover-esp-idf.outputs.count }}
-          ARDUINO_COUNT: ${{ needs.discover-arduino.outputs.count }}
+          EVENT_NAME: ${{ github.event_name }}
+          TARGET: ${{ github.event.inputs.target }}
+          BEFORE: ${{ github.event.before }}
+          BASE_REF: ${{ github.base_ref }}
         run: |
-          if [[ "$ESP_IDF_COUNT" == "0" && "$ARDUINO_COUNT" == "0" ]]; then
-            echo "::error title=No examples matched selector::No ESP-IDF project or Arduino sketch matched '$SELECTOR'."
-            exit 1
+          if [[ "$EVENT_NAME" == "workflow_dispatch" || "$GITHUB_REF" == refs/tags/* ]]; then
+            python3 scripts/route_ci.py --selector "${TARGET:-all}" --github-output "$GITHUB_OUTPUT"
+          elif [[ "$EVENT_NAME" == "pull_request" ]]; then
+            base="$(git merge-base "origin/$BASE_REF" HEAD)"
+            python3 scripts/route_ci.py --base "$base" --head HEAD --github-output "$GITHUB_OUTPUT"
+          else
+            if [[ "$BEFORE" =~ ^0+$ ]]; then
+              python3 scripts/route_ci.py --selector all --github-output "$GITHUB_OUTPUT"
+            else
+              python3 scripts/route_ci.py --base "$BEFORE" --head HEAD --github-output "$GITHUB_OUTPUT"
+            fi
           fi
+      - name: Audit Markdown policy
+        shell: bash
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          BASE_REF: ${{ github.base_ref }}
+          BEFORE: ${{ github.event.before }}
+          DOCS_ONLY: ${{ steps.route.outputs.docs_only }}
+        run: |
+          run_changed_scope() {
+            local base="$1"
+            python3 scripts/audit_markdown.py . --base "$base" --config config/markdown-audit.json --format json
+            if [[ "$DOCS_ONLY" == "true" ]]; then
+              python3 scripts/audit_markdown.py . --base "$base" --config config/markdown-audit.json --format json --expect-docs-only
+            fi
+          }
+          if [[ "$EVENT_NAME" == "pull_request" ]]; then
+            base="$(git merge-base "origin/$BASE_REF" HEAD)"
+            run_changed_scope "$base"
+          elif [[ "$EVENT_NAME" == "push" && "$GITHUB_REF" != refs/tags/* && -n "$BEFORE" && ! "$BEFORE" =~ ^0+$ ]]; then
+            run_changed_scope "$BEFORE"
+          fi
+          python3 scripts/audit_markdown.py . --all --config config/markdown-audit.json --format json
+      - name: Report routing decision
+        run: |
+          echo "${{ steps.route.outputs.route_summary }}"
+          echo "firmware_touched=${{ steps.route.outputs.firmware_touched }}"
+          echo "release_review_required=${{ steps.route.outputs.release_review_required }}"
 
   build-esp-idf:
-    needs:
-      - discover-esp-idf
-      - validate-selection
-    if: needs.discover-esp-idf.outputs.count != '0'
+    needs: route
+    if: needs.route.outputs.idf_count != '0'
     runs-on: ubuntu-latest
     container: espressif/idf:${{ matrix.idf }}
     strategy:
       fail-fast: false
-      matrix: ${{ fromJSON(needs.discover-esp-idf.outputs.matrix) }}
+      matrix: ${{ fromJSON(needs.route.outputs.idf_matrix) }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - name: Build ${{ matrix.path }} with ESP-IDF ${{ matrix.idf }}
         shell: bash
         run: |
@@ -86,49 +106,25 @@ jobs:
       - name: Package firmware
         shell: bash
         run: |
-          python3 releases/package_firmware.py \
-            --framework esp-idf \
-            --project "${{ matrix.path }}" \
-            --build-dir "build/${{ matrix.name }}-${{ matrix.idf }}" \
-            --name "ESP32-S3-Touch-LCD-4-${{ matrix.name }}-${{ matrix.idf }}" \
-            --framework-version "${{ matrix.idf }}" \
-            --target esp32s3 \
-            --git-sha "${{ github.sha }}" \
-            --output-dir release-artifacts
-      - name: Upload firmware artifact
-        uses: actions/upload-artifact@v4
+          python3 releases/package_firmware.py --framework esp-idf --project "${{ matrix.path }}" --build-dir "build/${{ matrix.name }}-${{ matrix.idf }}" --name "ESP32-S3-Touch-LCD-4-${{ matrix.name }}-${{ matrix.idf }}" --framework-version "${{ matrix.idf }}" --target esp32s3 --git-sha "${{ github.event.pull_request.head.sha || github.sha }}" --output-dir release-artifacts
+      - uses: actions/upload-artifact@v6
         with:
           name: firmware-esp-idf-${{ matrix.name }}-${{ matrix.idf }}
           path: release-artifacts/*.zip
           if-no-files-found: error
 
-  discover-arduino:
-    runs-on: ubuntu-latest
-    outputs:
-      matrix: ${{ steps.discover.outputs.matrix }}
-      count: ${{ steps.discover.outputs.count }}
-    steps:
-      - uses: actions/checkout@v4
-      - id: discover
-        run: |
-          python3 scripts/discover_examples.py \
-            --surface arduino \
-            --selector "${{ github.event.inputs.target || 'all' }}" \
-            --arduino-core 3.3.11 \
-            --fqbn esp32:esp32:esp32s3:USBMode=hwcdc,CDCOnBoot=cdc,FlashSize=16M,PSRAM=opi,PartitionScheme=app3M_fat9M_16MB \
-            --github-output "$GITHUB_OUTPUT"
-
   build-arduino:
-    needs:
-      - discover-arduino
-      - validate-selection
-    if: needs.discover-arduino.outputs.count != '0'
+    needs: route
+    if: needs.route.outputs.arduino_count != '0'
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
-      matrix: ${{ fromJSON(needs.discover-arduino.outputs.matrix) }}
+      matrix: ${{ fromJSON(needs.route.outputs.arduino_matrix) }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - uses: arduino/setup-arduino-cli@v2
       - name: Install ESP32 Arduino core
         run: |
@@ -138,26 +134,29 @@ jobs:
           arduino-cli core install esp32:esp32@${{ matrix.core }}
       - name: Compile ${{ matrix.path }}
         run: |
-          arduino-cli compile \
-            --fqbn "${{ matrix.fqbn }}" \
-            --libraries examples/arduino/libraries \
-            --export-binaries \
-            --output-dir "build/${{ matrix.name }}-${{ matrix.core }}" \
-            "${{ matrix.path }}"
+          arduino-cli compile --fqbn "${{ matrix.fqbn }}" --libraries examples/arduino/libraries --export-binaries --output-dir "build/${{ matrix.name }}-${{ matrix.core }}" "${{ matrix.path }}"
       - name: Package firmware
         run: |
-          python3 releases/package_firmware.py \
-            --framework arduino \
-            --project "${{ matrix.path }}" \
-            --build-dir "build/${{ matrix.name }}-${{ matrix.core }}" \
-            --name "ESP32-S3-Touch-LCD-4-${{ matrix.name }}-arduino-${{ matrix.core }}" \
-            --framework-version "${{ matrix.core }}" \
-            --target esp32s3 \
-            --git-sha "${{ github.sha }}" \
-            --output-dir release-artifacts
-      - name: Upload firmware artifact
-        uses: actions/upload-artifact@v4
+          python3 releases/package_firmware.py --framework arduino --project "${{ matrix.path }}" --build-dir "build/${{ matrix.name }}-${{ matrix.core }}" --name "ESP32-S3-Touch-LCD-4-${{ matrix.name }}-arduino-${{ matrix.core }}" --framework-version "${{ matrix.core }}" --target esp32s3 --git-sha "${{ github.event.pull_request.head.sha || github.sha }}" --output-dir release-artifacts
+      - uses: actions/upload-artifact@v6
         with:
           name: firmware-arduino-${{ matrix.name }}-${{ matrix.core }}
           path: release-artifacts/*.zip
           if-no-files-found: error
+
+  ci-status:
+    if: always()
+    needs: [route, build-esp-idf, build-arduino]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Require routing and non-skipped builds to succeed
+        env:
+          ROUTE: ${{ needs.route.result }}
+          IDF: ${{ needs.build-esp-idf.result }}
+          ARDUINO: ${{ needs.build-arduino.result }}
+          SUMMARY: ${{ needs.route.outputs.route_summary }}
+        run: |
+          echo "$SUMMARY"
+          if [[ "$ROUTE" != success || ( "$IDF" != success && "$IDF" != skipped ) || ( "$ARDUINO" != success && "$ARDUINO" != skipped ) ]]; then
+            exit 1
+          fi

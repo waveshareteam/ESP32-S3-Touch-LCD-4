@@ -80,10 +80,10 @@ The current CI matrix builds this example with ESP-IDF v5.5.5 and v6.0.2.
 cd examples/esp-idf/ioexpander
 idf.py set-target esp32s3
 idf.py build
-idf.py -p PORT flash monitor
+idf.py -p <PORT> flash monitor
 ```
 
-Replace `PORT` with the actual serial port, such as `COM8` on Windows or `/dev/ttyACM0` on Linux.
+Replace `<PORT>` with the actual serial port, such as `COMx` on Windows.
 
 ### Expected Serial Log
 
