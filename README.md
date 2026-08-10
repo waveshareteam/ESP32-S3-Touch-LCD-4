@@ -1,19 +1,19 @@
 <div align="center">
-  <h1>ESP32-S3-Touch-LCD-4</h1>
-  <p><strong>ESP32-S3 4-inch 480 x 480 RGB LCD development board with optional GT911 capacitive touch</strong></p>
+  <h1>ESP32-S3-LCD-4 / ESP32-S3-Touch-LCD-4</h1>
+  <p><strong>ESP32-S3 4-inch 480 x 480 RGB LCD development board family, with and without GT911 capacitive touch</strong></p>
   <p>
     <a href="https://github.com/waveshareteam/ESP32-S3-Touch-LCD-4/actions/workflows/examples.yml"><img alt="Build Examples" src="https://github.com/waveshareteam/ESP32-S3-Touch-LCD-4/actions/workflows/examples.yml/badge.svg"></a>
     <a href="LICENSE.txt"><img alt="License" src="https://img.shields.io/github/license/waveshareteam/ESP32-S3-Touch-LCD-4"></a>
   </p>
   <p>
     <a href="README_CN.md">中文</a> ·
-    <a href="https://www.waveshare.com/esp32-s3-touch-lcd-4.htm">🌐 Product Page</a> ·
+    <a href="https://www.waveshare.com/product/esp32-s3-touch-lcd-4.htm">🌐 Product Page</a> ·
     <a href="https://www.waveshare.com/wiki/ESP32-S3-Touch-LCD-4">📚 Documentation</a> ·
     <a href="https://github.com/waveshareteam/ESP32-S3-Touch-LCD-4/actions/workflows/examples.yml">📦 CI Firmware</a> ·
     <a href="examples/esp-idf/">🧩 ESP-IDF Examples</a> ·
     <a href="examples/arduino/">🔧 Arduino Examples</a>
   </p>
-  <img src="https://www.waveshare.com/w/upload/7/7b/ESP32-S3-Touch-LCD-4-P.jpg" alt="Waveshare ESP32-S3-Touch-LCD-4" width="500">
+  <img src="assets/ESP32-S3-LCD-4-family.jpg" alt="Waveshare ESP32-S3-LCD-4 and ESP32-S3-Touch-LCD-4 product family" width="500">
 </div>
 
 ---

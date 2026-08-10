@@ -1,6 +1,6 @@
 <div align="center">
-  <h1>ESP32-S3-Touch-LCD-4</h1>
-  <p><strong>ESP32-S3 4 英寸 480 x 480 RGB LCD 开发板，可选 GT911 电容触摸</strong></p>
+  <h1>ESP32-S3-LCD-4 / ESP32-S3-Touch-LCD-4</h1>
+  <p><strong>ESP32-S3 4 英寸 480 x 480 RGB LCD 开发板系列，提供带/不带 GT911 电容触摸版本</strong></p>
   <p>
     <a href="https://github.com/waveshareteam/ESP32-S3-Touch-LCD-4/actions/workflows/examples.yml"><img alt="构建示例" src="https://github.com/waveshareteam/ESP32-S3-Touch-LCD-4/actions/workflows/examples.yml/badge.svg"></a>
     <a href="LICENSE.txt"><img alt="许可证" src="https://img.shields.io/github/license/waveshareteam/ESP32-S3-Touch-LCD-4"></a>
@@ -13,7 +13,7 @@
     <a href="examples/esp-idf/">🧩 ESP-IDF 示例</a> ·
     <a href="examples/arduino/">🔧 Arduino 示例</a>
   </p>
-  <img src="https://www.waveshare.com/w/upload/7/7b/ESP32-S3-Touch-LCD-4-P.jpg" alt="Waveshare ESP32-S3-Touch-LCD-4" width="500">
+  <img src="assets/ESP32-S3-LCD-4-family.jpg" alt="Waveshare ESP32-S3-LCD-4 与 ESP32-S3-Touch-LCD-4 产品系列" width="500">
 </div>
 
 ---

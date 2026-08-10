@@ -15,6 +15,7 @@ import discover_examples
 
 DOC_SUFFIXES = {".md", ".markdown", ".rst"}
 DOC_ASSET_SUFFIXES = {".png", ".jpg", ".jpeg", ".gif", ".svg", ".webp", ".pdf"}
+DOCUMENTATION_ASSET_PATHS = frozenset({"assets/ESP32-S3-LCD-4-family.jpg"})
 GLOBAL_PATHS = frozenset(
     {
         ".github/workflows/examples.yml",
@@ -41,7 +42,9 @@ def is_document(path: str) -> bool:
 
 
 def is_docs_asset(path: str) -> bool:
-    return path.startswith("docs/") and Path(path).suffix.lower() in DOC_ASSET_SUFFIXES
+    return path in DOCUMENTATION_ASSET_PATHS or (
+        path.startswith("docs/") and Path(path).suffix.lower() in DOC_ASSET_SUFFIXES
+    )
 
 
 def is_governance(path: str) -> bool:

@@ -2,13 +2,17 @@
 
 [English](CI.md)
 
-`Build Examples` 工作流先分类改动，再在 GitHub Actions 中构建受影响的源码维护示例。`ci-status` 在 PR 与 main/master 推送中始终出现，包括仅文档改动。
+`Build Examples` 工作流先分类改动，在 route job 中运行 Markdown gate，然后在 GitHub Actions 中构建受影响的源码维护示例。`ci-status` 在 PR 与 main/master 推送中始终出现，包括仅文档改动。
 
 - ESP-IDF 工程从 `examples/esp-idf/*/CMakeLists.txt` 发现。
 - Arduino sketches 从 `examples/arduino/` 下的 `.ino` 文件发现，但排除 `examples/arduino/libraries/**`。
 - `firmware/` 下的工厂/恢复固件仅用于烧录和恢复说明，不由 CI 重新构建。
 
 Markdown 即使位于示例或随附库中也只算文档。直接示例源码只选择所属入口；`config/`、ESP-IDF 共享输入、随附 Arduino 库源码以及工作流/发现/打包输入会选择相应完整表面。未知非文档输入会保守选择两个表面；`firmware/` 改动会作为独立维护范围报告且绝不进入示例矩阵，其中二进制或归档改动还需要发布审查。
+
+在 PR 中，route job 会在精确的 PR head 上，以 merge base 运行仓库内的 Markdown audit。普通分支 push 使用非全零的 `before` commit 作为 changed-scope base；tag、手动运行及 `before` 全零的 push 只运行完整清单。若路由结果为 `docs_only=true`，每个 changed-scope 命令还会断言 `--expect-docs-only`。每个事件都会运行完整的已跟踪 Markdown 清单。任一 audit 失败都会令 `route` 和 `ci-status` 失败。
+
+Markdown 契约将首页定义为多产品 hub：本地化页头使用中性的产品族标题、本地产品族 hero 和产品 quick link。完整清单不启用 `--strict`，因为现有公开 `_CN.md` 路径会产生已知 warning；这些路径保持稳定，而策略 error 仍会使 gate 失败。
 
 `workflow_dispatch` 支持填写 `all`、示例目录名或仓库相对路径；无匹配的选择器会被拒绝。
 

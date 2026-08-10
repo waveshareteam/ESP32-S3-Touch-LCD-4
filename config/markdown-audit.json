@@ -7,7 +7,7 @@
   ],
   "language_link_exempt_patterns": [],
   "relative_link_ignore_patterns": [],
-  "docs_only_allowed_patterns": [],
+  "docs_only_allowed_patterns": ["assets/ESP32-S3-LCD-4-family.jpg"],
   "sensitive_allow_regexes": [],
   "bilingual_pairs": [
     {"english": "README.md", "chinese": "README_CN.md"},
@@ -43,8 +43,8 @@
     {
       "english": "README.md",
       "chinese": "README_CN.md",
-      "profile": "single-product",
-      "required_components": ["centered_header", "html_h1", "subtitle", "badges", "language_switch", "quick_links", "separator", "h2"],
+      "profile": "multi-product-hub",
+      "required_components": ["centered_header", "html_h1", "subtitle", "badges", "language_switch", "quick_links", "hero_image", "separator", "h2"],
       "required_quick_links": ["product", "documentation", "firmware", "esp_idf", "arduino"],
       "required_badges": ["build", "license"],
       "required_h2_icons": ["✨", "🖥️", "📦", "🛠️", "🧪", "🛠️", "🔌", "🗂️", "📚", "🤝", "📄"],

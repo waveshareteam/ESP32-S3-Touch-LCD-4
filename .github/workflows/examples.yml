@@ -56,6 +56,28 @@ jobs:
               python3 scripts/route_ci.py --base "$BEFORE" --head HEAD --github-output "$GITHUB_OUTPUT"
             fi
           fi
+      - name: Audit Markdown policy
+        shell: bash
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          BASE_REF: ${{ github.base_ref }}
+          BEFORE: ${{ github.event.before }}
+          DOCS_ONLY: ${{ steps.route.outputs.docs_only }}
+        run: |
+          run_changed_scope() {
+            local base="$1"
+            python3 scripts/audit_markdown.py . --base "$base" --config config/markdown-audit.json --format json
+            if [[ "$DOCS_ONLY" == "true" ]]; then
+              python3 scripts/audit_markdown.py . --base "$base" --config config/markdown-audit.json --format json --expect-docs-only
+            fi
+          }
+          if [[ "$EVENT_NAME" == "pull_request" ]]; then
+            base="$(git merge-base "origin/$BASE_REF" HEAD)"
+            run_changed_scope "$base"
+          elif [[ "$EVENT_NAME" == "push" && "$GITHUB_REF" != refs/tags/* && -n "$BEFORE" && ! "$BEFORE" =~ ^0+$ ]]; then
+            run_changed_scope "$BEFORE"
+          fi
+          python3 scripts/audit_markdown.py . --all --config config/markdown-audit.json --format json
       - name: Report routing decision
         run: |
           echo "${{ steps.route.outputs.route_summary }}"

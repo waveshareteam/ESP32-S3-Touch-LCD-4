@@ -156,6 +156,19 @@ class WorkflowContractTests(unittest.TestCase):
         self.assertIn("fetch-depth: 0", workflow)
         self.assertIn("python3 scripts/route_ci.py --base", workflow)
         self.assertIn("python3 scripts/route_ci.py --selector", workflow)
+        self.assertIn(
+            'python3 scripts/audit_markdown.py . --base "$base" --config config/markdown-audit.json --format json',
+            workflow,
+        )
+        self.assertIn(
+            'python3 scripts/audit_markdown.py . --base "$base" --config config/markdown-audit.json --format json --expect-docs-only',
+            workflow,
+        )
+        self.assertIn(
+            "python3 scripts/audit_markdown.py . --all --config config/markdown-audit.json --format json",
+            workflow,
+        )
+        self.assertNotIn("audit_markdown.py . --all --strict", workflow)
         self.assertIn("if: needs.route.outputs.idf_count != '0'", workflow)
         self.assertIn("if: needs.route.outputs.arduino_count != '0'", workflow)
         self.assertIn("ci-status:", workflow)
@@ -171,6 +184,26 @@ class WorkflowContractTests(unittest.TestCase):
         )
         self.assertIn('"$IDF" != success && "$IDF" != skipped', workflow)
         self.assertIn('"$ARDUINO" != success && "$ARDUINO" != skipped', workflow)
+
+    def test_markdown_audit_scope_control_flow_handles_all_events(self) -> None:
+        workflow = (REPO_ROOT / ".github/workflows/examples.yml").read_text(
+            encoding="utf-8"
+        )
+
+        self.assertIn("BEFORE: ${{ github.event.before }}", workflow)
+        self.assertIn('if [[ "$EVENT_NAME" == "pull_request" ]]; then', workflow)
+        self.assertIn('base="$(git merge-base "origin/$BASE_REF" HEAD)"', workflow)
+        self.assertIn('run_changed_scope "$base"', workflow)
+        self.assertIn(
+            'elif [[ "$EVENT_NAME" == "push" && "$GITHUB_REF" != refs/tags/* && -n "$BEFORE" && ! "$BEFORE" =~ ^0+$ ]]; then',
+            workflow,
+        )
+        self.assertIn('run_changed_scope "$BEFORE"', workflow)
+        self.assertEqual(workflow.count("run_changed_scope \""), 2)
+        self.assertIn(
+            "python3 scripts/audit_markdown.py . --all --config config/markdown-audit.json --format json",
+            workflow,
+        )
 
 
 class RoutingTests(unittest.TestCase):
@@ -233,6 +266,9 @@ class RoutingTests(unittest.TestCase):
         asset = self.outputs("M\tdocs/diagram.png\n")
         self.assertEqual(self.counts(asset), (0, 0))
         self.assertEqual(asset["docs_only"], "true")
+        family_asset = self.outputs("M\tassets/ESP32-S3-LCD-4-family.jpg\n")
+        self.assertEqual(self.counts(family_asset), (0, 0))
+        self.assertEqual(family_asset["docs_only"], "true")
         archive = self.outputs("M\treleases/delivery.zip\n")
         self.assertEqual(self.counts(archive), (0, 0))
         self.assertEqual(archive["release_review_required"], "true")
