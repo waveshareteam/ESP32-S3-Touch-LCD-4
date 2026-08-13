@@ -17,4 +17,6 @@ Small local components remain only where they are board-example glue:
 
 Arduino examples use bundled libraries from `examples/arduino/libraries` so CI and customer builds use the same known library set.
 
+The exact component pins in the manifests are the current repository compatibility set for the ESP-IDF v5.5 and v6 CI lines. The BSP/custom-I/O/RTC pins are the registry releases selected during maintenance. ESP-Brookesia `0.4.2` is intentionally retained instead of `0.5.0` until both IDF lines and board hardware behavior have been validated; revisit these pins after that validation. This records the current maintenance policy and does not claim hardware qualification by this change.
+
 When a local reusable driver becomes available as a maintained Waveshare or Espressif component, prefer migrating the example manifest to the managed component and keep local code only for board-specific glue.

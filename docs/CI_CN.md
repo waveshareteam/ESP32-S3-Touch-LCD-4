@@ -8,7 +8,7 @@
 - Arduino sketches 从 `examples/arduino/` 下的 `.ino` 文件发现，但排除 `examples/arduino/libraries/**`。
 - `firmware/` 下的工厂/恢复固件仅用于烧录和恢复说明，不由 CI 重新构建。
 
-Markdown 即使位于示例或随附库中也只算文档。直接示例源码只选择所属入口；`config/`、ESP-IDF 共享输入、随附 Arduino 库源码以及工作流/发现/打包输入会选择相应完整表面。未知非文档输入会保守选择两个表面；`firmware/` 改动会作为独立维护范围报告且绝不进入示例矩阵，其中二进制或归档改动还需要发布审查。
+Markdown 即使位于示例或随附库中也只算文档。直接示例源码只选择所属入口；`config/`、ESP-IDF 共享输入、随附 Arduino 库源码以及工作流/发现/打包输入会选择相应完整表面。未知非文档输入会保守选择两个表面；`firmware/` 改动会作为独立维护范围报告且绝不进入示例矩阵，其中 `.bin` 文件和在 manifest 中明确分类为交付产物的归档还需要发布审查。
 
 在 PR 中，route job 会在精确的 PR head 上，以 merge base 运行仓库内的 Markdown audit。普通分支 push 使用非全零的 `before` commit 作为 changed-scope base；tag、手动运行及 `before` 全零的 push 只运行完整清单。若路由结果为 `docs_only=true`，每个 changed-scope 命令还会断言 `--expect-docs-only`。每个事件都会运行完整的已跟踪 Markdown 清单。任一 audit 失败都会令 `route` 和 `ci-status` 失败。
 
@@ -25,6 +25,8 @@ Markdown 契约将首页定义为多产品 hub：本地化页头使用中性的�
 版本固定值以工作流与示例发现脚本共同为准；当前 CI 配置更新时，请同步更新这里的快照。
 
 完整矩阵最多 33 个构建（10 个 ESP-IDF 示例 × 2 个版本，加 13 个 Arduino sketches）。每个成功构建都会上传可烧录 firmware artifact。下载 workflow run 中的 artifact zip，解压后使用板卡串口运行 `flash.sh` 或 `flash.bat`。
+
+轻量 repository-tools 工作流还会使用 `python3 scripts/verify_firmware_artifacts.py --repo . --manifest firmware/artifacts.json --index` 校验不可变的已检入固件 manifest。该校验为只读，且与示例矩阵分离。仅变更工厂固件二进制文件时需要发布审查，但不会选择示例构建；变更 manifest、校验器、发现/路由策略或 repository-tools 工作流属于全局 CI 输入，会有意选择完整示例矩阵。
 
 Artifact 打包和下载说明见 [../releases/README_CN.md](../releases/README_CN.md)。
 

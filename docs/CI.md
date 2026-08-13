@@ -8,7 +8,7 @@ The `Build Examples` workflow first classifies changes, runs the Markdown gate i
 - Arduino sketches are discovered from `.ino` files under `examples/arduino/`, excluding `examples/arduino/libraries/**`.
 - Factory/recovery firmware under `firmware/` is documented for flashing, but is not rebuilt by CI.
 
-Markdown is documentation-only even inside an example or bundled library. Direct example source selects its owning entry; `config/`, ESP-IDF shared inputs, bundled Arduino-library source, workflow/discovery/packaging inputs select the relevant full surface. Unknown non-document inputs conservatively select both surfaces. `firmware/` changes are reported as a separate maintenance surface and never enter an example matrix; binary or archive changes additionally require release review.
+Markdown is documentation-only even inside an example or bundled library. Direct example source selects its owning entry; `config/`, ESP-IDF shared inputs, bundled Arduino-library source, workflow/discovery/packaging inputs select the relevant full surface. Unknown non-document inputs conservatively select both surfaces. `firmware/` changes are reported as a separate maintenance surface and never enter an example matrix; `.bin` files and archives explicitly classified as delivery artifacts additionally require release review.
 
 On pull requests, the route job runs the repository-local Markdown audit against the merge base at the exact pull-request head. Ordinary branch pushes use the non-zero `before` commit as the changed-scope base; tags, manual runs, and all-zero `before` pushes run only the complete inventory. When routing reports `docs_only=true`, every changed-scope command also asserts `--expect-docs-only`. Every event runs the complete tracked Markdown inventory. Any audit failure fails `route`, and therefore `ci-status`.
 
@@ -25,6 +25,8 @@ Matrix configured at the time of this update:
 The workflow and discovery script together are the source of truth for version pins. Update this snapshot whenever that current CI configuration changes.
 
 The largest matrix is 33 builds (10 ESP-IDF examples × 2 versions plus 13 Arduino sketches). Each successful matrix build uploads a flashable firmware artifact. Download the artifact zip from the workflow run, extract it, then run `flash.sh` or `flash.bat` with the board serial port.
+
+The lightweight repository-tools workflow also verifies the immutable checked-in firmware manifest with `python3 scripts/verify_firmware_artifacts.py --repo . --manifest firmware/artifacts.json --index`. That verification is read-only and remains separate from example matrices. A binary-only factory-firmware change requires release review and does not select example builds. Changes to the manifest, verifier, discovery/routing policy, or repository-tools workflow are global CI inputs and intentionally select the complete example matrix.
 
 For artifact packaging and download details, see [../releases/README.md](../releases/README.md).
 

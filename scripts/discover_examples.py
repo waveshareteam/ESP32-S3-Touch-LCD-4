@@ -14,8 +14,11 @@ DEFAULT_ARDUINO_CORE = "3.3.11"
 COMMON_GLOBAL_SELECTORS = frozenset(
     {
         ".github/workflows/examples.yml",
+        ".github/workflows/repository-tools.yml",
         "releases/package_firmware.py",
         "scripts/discover_examples.py",
+        "scripts/verify_firmware_artifacts.py",
+        "firmware/artifacts.json",
     }
 )
 
