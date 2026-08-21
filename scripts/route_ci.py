@@ -8,7 +8,7 @@ import json
 import subprocess
 import sys
 from dataclasses import dataclass, field
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 
 import discover_examples
 
@@ -19,15 +19,18 @@ DOCUMENTATION_ASSET_PATHS = frozenset({"assets/ESP32-S3-LCD-4-family.jpg"})
 GLOBAL_PATHS = frozenset(
     {
         ".github/workflows/examples.yml",
+        ".github/workflows/repository-tools.yml",
         "scripts/route_ci.py",
         "scripts/discover_examples.py",
+        "scripts/verify_firmware_artifacts.py",
+        "firmware/artifacts.json",
         "releases/package_firmware.py",
     }
 )
 IDF_SHARED_PREFIXES = ("config/", "examples/esp-idf/components/", "components/")
 ARDUINO_LIBRARY_PREFIX = "examples/arduino/libraries/"
 FIRMWARE_PREFIX = "firmware/"
-RELEASE_ARTIFACT_SUFFIXES = {".bin", ".zip", ".7z", ".rar", ".tar", ".tgz", ".gz", ".bz2", ".xz"}
+DELIVERY_ARCHIVE_SUFFIXES = {".zip", ".7z", ".rar", ".tar", ".tgz", ".gz", ".bz2", ".xz"}
 
 
 def normalize(path: str) -> str:
@@ -83,6 +86,72 @@ def _owned(path: str, entries: list[dict[str, str]]) -> str | None:
     return None
 
 
+def _reject_duplicate_keys(pairs: list[tuple[str, object]]) -> dict[str, object]:
+    result: dict[str, object] = {}
+    for key, value in pairs:
+        if key in result:
+            raise ValueError(f"duplicate JSON object key: {key}")
+        result[key] = value
+    return result
+
+
+def delivery_archives(repo: Path) -> set[str]:
+    """Return explicitly declared delivery archives; malformed manifests declare none."""
+    try:
+        data = json.loads(
+            (repo / "firmware/artifacts.json").read_text(encoding="utf-8"),
+            object_pairs_hook=_reject_duplicate_keys,
+        )
+        if (
+            not isinstance(data, dict)
+            or set(data) != {"version", "artifacts"}
+            or type(data["version"]) is not int
+            or data["version"] != 1
+            or not isinstance(data["artifacts"], list)
+        ):
+            return set()
+        artifacts = data["artifacts"]
+    except (OSError, UnicodeDecodeError, json.JSONDecodeError, ValueError):
+        return set()
+    paths = set()
+    for artifact in artifacts:
+        if (
+            not isinstance(artifact, dict)
+            or set(artifact) != {"path", "kind", "sha256", "size"}
+        ):
+            return set()
+        path = artifact.get("path")
+        kind = artifact.get("kind")
+        digest = artifact.get("sha256")
+        size = artifact.get("size")
+        if (
+            not isinstance(path, str)
+            or not path
+            or "\\" in path
+            or kind not in {"firmware", "delivery_archive"}
+            or not isinstance(digest, str)
+            or len(digest) != 64
+            or any(char not in "0123456789abcdef" for char in digest)
+            or isinstance(size, bool)
+            or not isinstance(size, int)
+            or size < 0
+        ):
+            return set()
+        candidate = PurePosixPath(path)
+        if candidate.is_absolute() or any(
+            part in {"", ".", ".."} for part in candidate.parts
+        ):
+            return set()
+        suffix = Path(path).suffix.lower()
+        if kind == "firmware" and suffix != ".bin":
+            return set()
+        if kind == "delivery_archive":
+            if suffix not in DELIVERY_ARCHIVE_SUFFIXES:
+                return set()
+            paths.add(candidate.as_posix())
+    return paths
+
+
 @dataclass
 class Route:
     idf: set[str] = field(default_factory=set)
@@ -116,19 +185,26 @@ class Route:
 def classify(paths: list[str], repo: Path) -> Route:
     idf_entries = discover_examples.discover_esp_idf(repo)
     arduino_entries = discover_examples.discover_arduino(repo)
+    declared_archives = delivery_archives(repo)
     route = Route()
     for path in paths:
+        if path in GLOBAL_PATHS:
+            route.non_document = True
+            route.all_idf = route.all_arduino = True
+            if path == "firmware/artifacts.json":
+                route.firmware_touched = True
+                route.release_review_required = True
+            continue
         if path.startswith(FIRMWARE_PREFIX):
             route.firmware_touched = True
-            route.release_review_required |= Path(path).suffix.lower() in RELEASE_ARTIFACT_SUFFIXES
+            route.release_review_required |= (
+                Path(path).suffix.lower() == ".bin" or path in declared_archives
+            )
             route.non_document |= not is_document(path)
             continue
         if is_document(path) or is_docs_asset(path) or is_governance(path):
             continue
         route.non_document = True
-        if path in GLOBAL_PATHS:
-            route.all_idf = route.all_arduino = True
-            continue
         if path.startswith(IDF_SHARED_PREFIXES):
             route.all_idf = True
             continue
@@ -147,7 +223,7 @@ def classify(paths: list[str], repo: Path) -> Route:
         # build input, so ownership rules above take precedence. Unowned
         # checked-in artifacts are a release-review surface, not a reason to
         # compile unrelated product examples.
-        if Path(path).suffix.lower() in RELEASE_ARTIFACT_SUFFIXES:
+        if Path(path).suffix.lower() == ".bin" or path in declared_archives:
             route.release_review_required = True
             continue
         route.all_idf = route.all_arduino = True
