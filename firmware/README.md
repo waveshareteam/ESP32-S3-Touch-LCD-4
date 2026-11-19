@@ -1,6 +1,6 @@
 # Factory Firmware
 
-[English](README.md) | [简体中文](README_ZH.md)
+[English](README.md) | [简体中文](README_CN.md) | [简体中文（规范版）](README_ZH.md)
 
 This directory stores the tested factory image for the ESP32-S3-Touch-LCD-4 development board.
 
@@ -18,3 +18,4 @@ Before flashing:
 SHA-256: `5DB7EE79F1063465D8114CEA3A4675C8C87BDF303C2A3EDAF6A55414C8634706`
 
 This file is a single merged BIN for factory recovery.
+
