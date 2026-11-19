@@ -1,3 +1,5 @@
+[English](README.md) | [简体中文](README_CN.md) | [简体中文（规范版）](README_ZH.md)
+
 # 出厂固件
 
 [English](README.md) | [简体中文](README_ZH.md)
@@ -18,3 +20,4 @@
 SHA-256：`5DB7EE79F1063465D8114CEA3A4675C8C87BDF303C2A3EDAF6A55414C8634706`
 
 该文件是用于恢复出厂功能的单个合并 BIN。
+
