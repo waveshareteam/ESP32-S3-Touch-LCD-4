@@ -2,7 +2,13 @@
   "version": 1,
   "artifacts": [
     {
-      "path": "firmware/ESP32-S3-Touch-LCD-4-V4.0-FactoryOnly-251122.bin",
+      "path": "firmware/ESP32-S3-LCD-4_FactoryOnly_20251218.bin",
+      "kind": "firmware",
+      "sha256": "7af2ca6b44d970c65dabef06e05659596eed9156873526893b0617cf0796ba76",
+      "size": 680896
+    },
+    {
+      "path": "firmware/ESP32-S3-Touch-LCD-4_FactoryOnly_20251122.bin",
       "kind": "firmware",
       "sha256": "5db7ee79f1063465d8114cea3a4675c8c87bdf303c2a3edaf6a55414c8634706",
       "size": 2913440

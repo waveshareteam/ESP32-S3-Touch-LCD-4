@@ -74,9 +74,10 @@ Touch 版本另外配备 GT911 电容触摸屏。
 python3 releases/download_artifacts.py --clean
 ```
 
-仓库内的 [V4.0 工厂/恢复镜像](firmware/ESP32-S3-Touch-LCD-4-V4.0-FactoryOnly-251122.bin)
-是为带触摸板卡发布的二进制文件，不由 CI 重新构建。请将工厂/恢复固件与 CI 从源码
-构建的固件分开使用。两者的区别和烧录说明见[固件产物](docs/firmware_CN.md)。
+仓库内的[工厂/恢复镜像](firmware/)覆盖 ESP32-S3-LCD-4 和
+ESP32-S3-Touch-LCD-4。请根据板卡型号选择对应镜像，并从 `0x0` 地址烧录。
+这些镜像不由 CI 重新构建。请将工厂/恢复固件与 CI 从源码构建的固件分开使用。
+两者的区别和烧录说明见[固件产物](docs/firmware_CN.md)。
 
 ## 🛠️ 从源码构建
 
