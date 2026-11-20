@@ -30,7 +30,7 @@
     {"english": "docs/components.md", "chinese": "docs/components_CN.md"},
     {"english": "docs/repository-structure.md", "chinese": "docs/repository-structure_CN.md"},
     {"english": "hardware/HARDWARE_REFERENCE.md", "chinese": "hardware/HARDWARE_REFERENCE_CN.md"},
-    {"english": "firmware/README.md", "chinese": "firmware/README_CN.md"},
+    {"english": "firmware/README.md", "chinese": "firmware/README_ZH.md"},
     {"english": "releases/README.md", "chinese": "releases/README_CN.md"},
     {"english": "config/README.md", "chinese": "config/README_CN.md"},
     {"english": "CONTRIBUTING.md", "chinese": "CONTRIBUTING_CN.md"},
