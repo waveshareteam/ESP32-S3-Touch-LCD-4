@@ -1,6 +1,6 @@
 # Factory Firmware
 
-[English](README.md) | [简体中文](README_CN.md) | [简体中文（规范版）](README_ZH.md)
+[English](README.md) | [简体中文](README_ZH.md)
 
 This directory stores tested factory recovery images for the ESP32-S3-LCD-4 family. Each file is a single merged BIN flashed from `0x0`.
 

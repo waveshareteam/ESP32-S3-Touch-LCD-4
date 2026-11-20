@@ -1,6 +1,6 @@
 # 出厂固件
 
-[English](README.md) | [简体中文](README_CN.md) | [简体中文（规范版）](README_ZH.md)
+[English](README.md) | [简体中文](README_ZH.md)
 
 本目录保存 ESP32-S3-LCD-4 系列已完成实物验证的出厂恢复镜像。每个文件都是从 `0x0` 地址烧录的单个合并 BIN。
 
