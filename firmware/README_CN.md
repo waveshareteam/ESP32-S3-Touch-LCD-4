@@ -1,11 +1,23 @@
-# 工厂固件
+[English](README.md) | [简体中文](README_CN.md) | [简体中文（规范版）](README_ZH.md)
 
-[English](README.md)
+# 出厂固件
 
-本目录包含 ESP32-S3-Touch-LCD-4 V4.0 的 Waveshare 工厂/恢复固件文件。
+[English](README.md) | [简体中文](README_ZH.md)
 
-该固件用于板卡恢复，或在测试源码示例前确认硬件行为。它是已发布的二进制产物，不是 GitHub Actions 从源码构建生成的输出。
+本目录保存 ESP32-S3-Touch-LCD-4 开发板的实测出厂镜像。
 
-烧录前请确认板卡型号和硬件版本。该镜像面向带触摸版本，不能作为 LCD-only 版本的 CI 结果。
+| 文件 | 用途 |
+| --- | --- |
+| [ESP32-S3-Touch-LCD-4_FactoryOnly_20251122.bin](ESP32-S3-Touch-LCD-4_FactoryOnly_20251122.bin) | ESP32-S3-Touch-LCD-4 出厂恢复固件，日期为 20251122，从 `0x0` 地址开始烧录。 |
 
-仓库固件产物策略和 CI 边界见 [../docs/firmware_CN.md](../docs/firmware_CN.md)。
+烧录前：
+
+- 备份需要保留的设备专用数据。
+- 确认开发板型号和硬件版本。
+- 烧录合并镜像前先整片擦除目标设备。
+- 按产品文档中的烧录流程操作。
+
+SHA-256：`5DB7EE79F1063465D8114CEA3A4675C8C87BDF303C2A3EDAF6A55414C8634706`
+
+该文件是用于恢复出厂功能的单个合并 BIN。
+

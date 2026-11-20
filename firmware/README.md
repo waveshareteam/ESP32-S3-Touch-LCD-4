@@ -1,11 +1,21 @@
 # Factory Firmware
 
-[中文](README_CN.md)
+[English](README.md) | [简体中文](README_CN.md) | [简体中文（规范版）](README_ZH.md)
 
-This directory contains the Waveshare V4.0 factory/recovery firmware image for ESP32-S3-Touch-LCD-4.
+This directory stores the tested factory image for the ESP32-S3-Touch-LCD-4 development board.
 
-Use this image for board recovery or to verify hardware behavior before testing source examples. It is a released binary artifact, not a source-build output from GitHub Actions.
+| File | Purpose |
+| --- | --- |
+| [ESP32-S3-Touch-LCD-4_FactoryOnly_20251122.bin](ESP32-S3-Touch-LCD-4_FactoryOnly_20251122.bin) | Factory recovery firmware for the ESP32-S3-Touch-LCD-4 board, dated 20251122. Flash from `0x0`. |
 
-Confirm the board model and hardware revision before flashing. The image targets the touch-equipped board and must not be treated as a CI result for the LCD-only variant.
+Before flashing:
 
-For the repository firmware artifact policy and CI boundary, see [../docs/firmware.md](../docs/firmware.md).
+- Back up any device-specific data that must be preserved.
+- Confirm the board model and hardware revision.
+- Erase the target device before writing the merged image.
+- Follow the flashing procedure in the product documentation.
+
+SHA-256: `5DB7EE79F1063465D8114CEA3A4675C8C87BDF303C2A3EDAF6A55414C8634706`
+
+This file is a single merged BIN for factory recovery.
+

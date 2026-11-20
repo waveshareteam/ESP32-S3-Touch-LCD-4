@@ -78,7 +78,7 @@ artifacts for the current branch with:
 python3 releases/download_artifacts.py --clean
 ```
 
-The checked-in [V4.0 factory/recovery image](firmware/ESP32-S3-Touch-LCD-4-V4.0-FactoryOnly-251122.bin)
+The checked-in [V4.0 factory/recovery image](firmware/ESP32-S3-Touch-LCD-4_FactoryOnly_20251122.bin)
 is a released binary for the touch-equipped board and is not rebuilt by CI.
 Keep factory/recovery firmware separate from source-built CI artifacts. See
 [Firmware Artifacts](docs/firmware.md) for the distinction and flashing notes.
