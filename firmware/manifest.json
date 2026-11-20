@@ -1,0 +1,27 @@
+{
+  "schema": 1,
+  "products": [
+    {
+      "id": "esp32-s3-touch-lcd-4",
+      "model": "ESP32-S3-Touch-LCD-4",
+      "readme": {
+        "en": "firmware/README.md",
+        "zh": "firmware/README_ZH.md"
+      },
+      "files": [
+        "firmware/ESP32-S3-Touch-LCD-4_FactoryOnly_20251122.bin"
+      ]
+    },
+    {
+      "id": "esp32-s3-lcd-4",
+      "model": "ESP32-S3-LCD-4",
+      "readme": {
+        "en": "firmware/README.md",
+        "zh": "firmware/README_ZH.md"
+      },
+      "files": [
+        "firmware/ESP32-S3-LCD-4_FactoryOnly_20251218.bin"
+      ]
+    }
+  ]
+}
